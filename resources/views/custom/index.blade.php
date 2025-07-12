@@ -24,8 +24,10 @@
 @endsection
 
 @section('content')
-<div class="container flex-grow-1 container-p-y d-flex justify-content-center">
+<div class="container col-md-7">
     @include('_messages')
+</div>
+<div class="container flex-grow-1 container-p-y d-flex justify-content-center">
     <div class="card col-md-7 mt-4">
         <div class="card-header p-0" style="margin-bottom: 100px;">
             <div class="banner-image">

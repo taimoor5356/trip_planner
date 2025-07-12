@@ -220,7 +220,6 @@
                             <p class="text-center mt-2">Access your Trip Planner Pro account.</p>
                             <!-- /Logo -->
                             <p class="mb-4">
-                            @include('_messages')
                             </p>
                             <form class="mb-3" id="login-form">
                                 @csrf
@@ -317,7 +316,6 @@
                             <p class="text-center mt-2">Access your Trip Planner Pro account.</p>
                             <!-- /Logo -->
                             <p class="mb-4">
-                            @include('_messages')
                             </p>
                             <form class="mb-3">
                                 @csrf

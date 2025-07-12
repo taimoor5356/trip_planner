@@ -104,7 +104,6 @@
     @endphp
 
     <div class="container flex-grow-1 container-p-y d-flex justify-content-center mt-4">
-        @include('_messages')
         @php
         $fetchItinerary = \App\Models\Itinerary::where('mode_of_travel', $queryParams['mode_of_travel'])->where('origin_id', $queryParams['starting_point'])->first();
         $itineraryDailyPlans = \App\Models\ItineraryDayWisePlan::with('destination.image')->where('itinerary_id', $fetchItinerary->id)->get();
@@ -575,7 +574,6 @@
                             <p class="text-center mt-2">Access your Trip Planner Pro account.</p>
                             <!-- /Logo -->
                             <p class="mb-4">
-                            @include('_messages')
                             </p>
                             <form class="mb-3" id="login-form">
                                 @csrf
@@ -670,7 +668,6 @@
                             <p class="text-center mt-2">Access your Trip Planner Pro account.</p>
                             <!-- /Logo -->
                             <p class="mb-4">
-                            @include('_messages')
                             </p>
                             <form class="mb-3">
                                 @csrf

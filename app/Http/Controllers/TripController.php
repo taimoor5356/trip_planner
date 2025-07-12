@@ -12,6 +12,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TripController extends Controller
@@ -233,9 +234,13 @@ dd('Under Construction');
     {
         try {
             $data['header_title'] = 'Trip Designed';
-            return view('custom.trip-planner', $data);
+            return response(View::make('custom.trip-planner', $data)->render());
         } catch (\Exception $e) {
-            dd($e);
+            // Log error for debugging
+            \Log::error('Blade error: ' . $e->getMessage());
+
+            // Redirect back or to a fallback page
+            return redirect()->back()->with('error', 'Something went wrong');
         }
     }
 }
