@@ -764,6 +764,20 @@
             </div>
         </div>
     </div>
+    <div class="modal fade modal-center" id="share-link-modal" tabindex="-1" role="dialog" aria-labelledby="share-link-modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-center">
+                <div class="modal-body">
+                    Copy the link
+                    <input type="text" readonly class="form-control" id="link-to-copy" value="{{ request()->fullUrl() }}">
+                    <br>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary" id="copy-the-link">Copy link</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('_scripts')
