@@ -20,11 +20,10 @@
 <div class="mb-3">
     <label class="form-label" for="built_id">Built Type</label>
     <div class="input-group input-group-merge">
-        <select name="built_id" id="built_id" class="form-control">
-            <option value="">Select Built Type</option>
+        <select name="built_id[]" id="built_id" class="form-control select2" multiple>
             @if(!empty($builtTypes))
             @foreach($builtTypes as $builtType)
-            <option value="{{$builtType->id}}" {{isset($record) ? (($record->built_id == $builtType->id) ? 'selected' : '') : ''}}>{{$builtType->name}}</option>
+            <option value="{{$builtType->id}}" {{(isset($record) && $record->built_id) ? (in_array($builtType->id, json_decode($record->built_id)) ? 'selected' : '') : ''}}>{{$builtType->name}}</option>
             @endforeach
             @endif
         </select>

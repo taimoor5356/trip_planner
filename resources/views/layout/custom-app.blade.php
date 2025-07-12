@@ -114,6 +114,11 @@
                 </li> -->
                 @if(Auth::user())
                 <!-- User -->
+                <li class="ms-2">
+                  <a class="btn-sm btn btn-secondary" href="{{route('custom')}}">
+                    <i class="bx bx-home"></i> <span class="align-middle"> Home</span>
+                  </a>
+                </li>
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
