@@ -8,6 +8,7 @@ use App\Models\City;
 use App\Models\Region;
 use Illuminate\Http\Request;
 use App\Models\Vehicle;
+use App\Models\VehicleCity;
 use App\Models\VehicleType;
 use DataTables;
 use Maatwebsite\Excel\Facades\Excel;
@@ -134,11 +135,11 @@ class VehicleController extends Controller
             'name' => 'required|string'
         ]);
         $vehicle = new Vehicle();
-        $this->storeAccommodation($vehicle, $request);
+        $this->storeVehicle($vehicle, $request);
         return redirect('admin/vehicles/list')->with('success', 'Vehicle added successfully');
     }
 
-    public function storeAccommodation($vehicle, $request) {
+    public function storeVehicle($vehicle, $request) {
         $vehicle->name = $request->name;
         $vehicle->registration_number = $request->registration_number ?? null;
         $vehicle->capacity_adults = $request->capacity_adults ?? null;
@@ -147,11 +148,18 @@ class VehicleController extends Controller
         $vehicle->brand = $request->brand ?? null;
         $vehicle->model = $request->model ?? null;
         // $vehicle->region_id = $request->region_id ?? null;
-        $vehicle->city_id = $request->city_id ?? null;
+        $vehicle->city_id = json_encode($request->city_id) ?? null;
         $vehicle->per_day_cost = $request->per_day_cost ?? null;
         $vehicle->vehicle_type_id = $request->vehicle_type_id ?? null;
         $vehicle->status = $request->status ?? null;
         $vehicle->save();
+        VehicleCity::where('vehicle_id', $vehicle->id)->delete();
+        foreach($request->city_id as $cityId) {
+            VehicleCity::create([
+                'vehicle_id' => $vehicle->id,
+                'city_id' => $cityId
+            ]);
+        }
         // Helpers::storeImage($request, \App\Models\VehicleImage::class, $vehicle, 'vehicle_id', 'vehicles');
     }
 
@@ -187,7 +195,7 @@ class VehicleController extends Controller
             'name' => 'required|string'
         ]);
         $vehicle = Vehicle::find($id);
-        $this->storeAccommodation($vehicle, $request);
+        $this->storeVehicle($vehicle, $request);
         return redirect('admin/vehicles/list')->with('success', 'Vehicle updated successfully');
     }
 

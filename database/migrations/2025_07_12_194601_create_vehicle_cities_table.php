@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('vehicle_cities', function (Blueprint $table) {
             $table->id();
+            $table->integer('vehicle_id')->nullable();
+            $table->integer('city_id')->nullable();
             $table->timestamps();
         });
     }

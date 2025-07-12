@@ -56,11 +56,12 @@
 <div class="mb-3">
     <label class="form-label" for="city_id">Cities</label>
     <div class="input-group input-group-merge">
-        <select name="city_id" id="city_id" class="form-control">
-            <option value="" disabled selected>Select City</option>
+        @php($selectedCities = isset($record->city_id) ? json_decode($record->city_id, true) : [])
+        <select name="city_id[]" id="city_id" class="form-control select2" multiple>
+            <option value="">Select City</option>
             @if(!empty($cities))
             @foreach($cities as $city)
-            <option value="{{$city->id}}" {{ isset($record) ? ($record->city_id == $city->id ? 'selected' : '') : '' }}>{{$city->name}}</option>
+            <option value="{{$city->id}}" {{ in_array($city->id, $selectedCities) ? 'selected' : '' }}>{{$city->name}}</option>
             @endforeach
             @endif
         </select>
