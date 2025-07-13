@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\RoomAmenity;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
@@ -18,25 +19,25 @@ class RoomAmenityImport implements ToCollection
                     continue;
                 }
 
-                if ($row[0] == 'ActivityType Name') {
+                if ($row[0] == 'Room Amenity Name') {
                     continue;
                 }
-                $activityTypeName = $row[0];
+                $roomAmenityName = $row[0];
                 $activityActiveStatus = $row[1];
                 
-                // ActivityType
-                $activityType = ActivityType::where('name', $activityTypeName)->first();
-                if (isset($activityType)) {
-                    $activityType = $activityType;
+                // RoomAmenity
+                $roomAmenity = RoomAmenity::where('name', $roomAmenityName)->first();
+                if (isset($roomAmenity)) {
+                    $roomAmenity = $roomAmenity;
                 } else {
-                    $activityType = new ActivityType();
+                    $roomAmenity = new RoomAmenity();
                 }
 
-                $activityType->website_link = $activityTypeName;
-                $activityType->status = $activityActiveStatus;
-                $activityType->save();
+                $roomAmenity->name = $roomAmenityName;
+                $roomAmenity->status = (strtolower($activityActiveStatus) == 'active' ? 1 : 2);
+                $roomAmenity->save();
 
-                // ActivityType
+                // RoomAmenity
             }
             return;
         } catch (\Exception $e) {

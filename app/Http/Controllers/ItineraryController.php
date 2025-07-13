@@ -159,7 +159,7 @@ class ItineraryController extends Controller
                     'itinerary_id' => $itinerary->id,
                     // 'day' => $request->days[$key],
                     'origin' => $request->origins[$key]['origin'],
-                    'destination_id' => $request->region_ids[$key]['region_id'],
+                    'destination_id' => $request->city_ids[$key]['city_id'],
                     'landmarks' => json_encode($request->days[$key]['landmarks'])
                 ]);
             }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\RoomCategoryImport;
 use App\Models\RoomCategory;
 use Illuminate\Http\Request;
 use DataTables;
@@ -159,12 +160,11 @@ class RoomCategoryController extends Controller
 
     public function importData(Request $request)
     {     
-dd('Under Construction');   
         try {
             $originalTimeLimit = ini_get('max_execution_time');
             set_time_limit(7200);
             gc_disable();
-            Excel::import(new AccomodationImport(), $request->file('file'));
+            Excel::import(new RoomCategoryImport(), $request->file('file'));
 
             exit;
             gc_enable();

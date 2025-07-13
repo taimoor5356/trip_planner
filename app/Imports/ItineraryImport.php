@@ -18,23 +18,28 @@ class ItineraryImport implements ToCollection
                     continue;
                 }
 
-                if ($row[0] == 'ActivityType Name') {
+                if ($row[0] == 'Headline') {
                     continue;
                 }
-                $activityTypeName = $row[0];
-                $activityActiveStatus = $row[1];
+                $itineraryHeadLine = $row[0];
+                $itineraryTagLine = $row[1];
+                $itineraryModeOfTravel = $row[2];
+                $itineraryOrigin = $row[3];
+                $itineraryDestination = $row[4];
+                $itineraryTripDuration = $row[5];
+                $itineraryStatus = $row[6];
                 
                 // ActivityType
-                $activityType = ActivityType::where('name', $activityTypeName)->first();
-                if (isset($activityType)) {
-                    $activityType = $activityType;
+                $itinerary = ActivityType::where('name', $itineraryHeadLine)->first();
+                if (isset($itinerary)) {
+                    $itinerary = $itinerary;
                 } else {
-                    $activityType = new ActivityType();
+                    $itinerary = new ActivityType();
                 }
 
-                $activityType->website_link = $activityTypeName;
-                $activityType->status = $activityActiveStatus;
-                $activityType->save();
+                $itinerary->website_link = $itineraryHeadLine;
+                $itinerary->status = $itineraryStatus;
+                $itinerary->save();
 
                 // ActivityType
             }

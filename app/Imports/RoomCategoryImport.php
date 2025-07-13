@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\RoomCategory;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
@@ -18,25 +19,25 @@ class RoomCategoryImport implements ToCollection
                     continue;
                 }
 
-                if ($row[0] == 'ActivityType Name') {
+                if ($row[0] == 'Room Category Name') {
                     continue;
                 }
-                $activityTypeName = $row[0];
+                $roomCategoryName = $row[0];
                 $activityActiveStatus = $row[1];
                 
-                // ActivityType
-                $activityType = ActivityType::where('name', $activityTypeName)->first();
-                if (isset($activityType)) {
-                    $activityType = $activityType;
+                // RoomCategory
+                $roomCategory = RoomCategory::where('name', $roomCategoryName)->first();
+                if (isset($roomCategory)) {
+                    $roomCategory = $roomCategory;
                 } else {
-                    $activityType = new ActivityType();
+                    $roomCategory = new RoomCategory();
                 }
 
-                $activityType->website_link = $activityTypeName;
-                $activityType->status = $activityActiveStatus;
-                $activityType->save();
+                $roomCategory->name = $roomCategoryName;
+                $roomCategory->status = (strtolower($activityActiveStatus) == 'active' ? 1 : 2);
+                $roomCategory->save();
 
-                // ActivityType
+                // RoomCategory
             }
             return;
         } catch (\Exception $e) {

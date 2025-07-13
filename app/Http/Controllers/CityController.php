@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CentralLogics\Helpers;
+use App\Imports\CityImport;
 use App\Models\City;
 use App\Models\Region;
 use Illuminate\Http\Request;
@@ -168,12 +169,11 @@ class CityController extends Controller
 
     public function importData(Request $request)
     {     
-dd('Under Construction');   
         try {
             $originalTimeLimit = ini_get('max_execution_time');
             set_time_limit(7200);
             gc_disable();
-            Excel::import(new AccomodationImport(), $request->file('file'));
+            Excel::import(new CityImport(), $request->file('file'));
 
             exit;
             gc_enable();

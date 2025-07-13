@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CentralLogics\Helpers;
+use App\Imports\RoomAmenityImport;
 use App\Models\RoomAmenity;
 use Illuminate\Http\Request;
 use DataTables;
@@ -161,12 +162,11 @@ class RoomAmenityController extends Controller
 
     public function importData(Request $request)
     {     
-dd('Under Construction');   
         try {
             $originalTimeLimit = ini_get('max_execution_time');
             set_time_limit(7200);
             gc_disable();
-            Excel::import(new AccomodationImport(), $request->file('file'));
+            Excel::import(new RoomAmenityImport(), $request->file('file'));
 
             exit;
             gc_enable();

@@ -16,6 +16,6 @@ class ItineraryDayWisePlan extends Model
     }
 
     public function destination() {
-        return $this->belongsTo(Region::class, 'destination_id', 'id');
+        return $this->belongsTo(City::class, 'destination_id', 'id');
     }
 }

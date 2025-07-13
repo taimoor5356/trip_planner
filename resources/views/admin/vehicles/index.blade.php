@@ -324,6 +324,58 @@
                     );
                 }
             });
+            
+            
+        // Import Data
+
+        var ajaxRequest;
+
+        $('#importForm').on('submit', function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var form = $(this)[0];
+            var formData = new FormData(form);
+
+            // Show spinner and disable buttons
+            $('#importBtn').prop('disabled', true);
+            $('#file').prop('disabled', true);
+            $('#loadingText').html('<p class=\'py-3\'>Please don\'t refresh the page. Importing is in progress...</p>');
+            $('.spinner-border').addClass('d-block').removeClass('d-none');
+
+            // Make AJAX request
+            ajaxRequest = $.ajax({
+                url: form.action,
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    // Handle success response
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                },
+                complete: function () {
+                    // Enable buttons and hide spinner
+                    $('#importBtn').prop('disabled', false);
+                    $('#file').prop('disabled', false);
+                    // $('#file').val('');
+                    $('#loadingText').empty();
+                    $('.spinner-border').removeClass('d-block').addClass('d-none');
+                }
+            });
+        });
+
+        // Show confirmation dialog when attempting to close the window or tab
+        window.addEventListener('beforeunload', function (e) {
+            if (ajaxRequest && ajaxRequest.readyState !== 4) {
+                var confirmationMessage = 'You have an active import in progress. Are you sure you want to leave?';
+                e.returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        });
         });
     });
 </script>

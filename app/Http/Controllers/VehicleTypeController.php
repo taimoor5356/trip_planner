@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\VehicleTypeImport;
 use Illuminate\Http\Request;
 use App\Models\VehicleType;
 use DataTables;
@@ -159,12 +160,11 @@ class VehicleTypeController extends Controller
 
     public function importData(Request $request)
     {     
-dd('Under Construction');   
         try {
             $originalTimeLimit = ini_get('max_execution_time');
             set_time_limit(7200);
             gc_disable();
-            Excel::import(new AccomodationImport(), $request->file('file'));
+            Excel::import(new VehicleTypeImport(), $request->file('file'));
 
             exit;
             gc_enable();

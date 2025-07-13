@@ -86,7 +86,7 @@ Route::post('/get-notifications', [NotificationController::class, 'getNotificati
 Route::post('/fetch-date-wise-destination', [FilterController::class, 'fetchDateWiseDestination'])->name('fetch_date_wise_destination');
 Route::post('/fetch-destination-wise-days', [FilterController::class, 'fetchDestinationWiseDays'])->name('fetch_destination_wise_days');
 Route::post('/fetch-people-wise-vehicles', [FilterController::class, 'fetchPeopleWiseVehicles'])->name('fetch_people_wise_vehicles');
-Route::post('/fetch-region-landmarks', [FilterController::class, 'fetchRegionLandmarks'])->name('fetch_region_landmarks');
+Route::post('/fetch-city-landmarks', [FilterController::class, 'fetchCityLandmarks'])->name('fetch_city_landmarks');
 
 Route::group(['prefix' => ''], function () {
         

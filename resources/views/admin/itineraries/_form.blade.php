@@ -207,10 +207,10 @@
                                 </div>
                                 <div class="mb-2">
                                     <label>Destination</label>
-                                    <select name="region_ids[${i}][region_id]" class="form-control region-select" data-day="${i}">
+                                    <select name="city_ids[${i}][city_id]" class="form-control city-select" data-day="${i}">
                                         <option value="">Select Destination</option>
-                                        @foreach(\App\Models\Region::where('status', 1)->get() as $region)
-                                            <option value="{{ $region->id }}">{{ $region->name }}</option>
+                                        @foreach(\App\Models\City::where('status', 1)->get() as $city)
+                                            <option value="{{ $city->id }}">{{ $city->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -232,23 +232,23 @@
                 $('#day-wise-plan-section').addClass('d-none');
             }
         });
-        $(document).on('change', '.region-select', function () {
-            const regionId = $(this).val();
+        $(document).on('change', '.city-select', function () {
+            const cityId = $(this).val();
             const day = $(this).data('day'); // from data-day attribute
             const $landmarkSelect = $(`#landmarks-day-${day}`);
 
             // Clear previous options
             $landmarkSelect.html('');
 
-            if (!regionId) return;
+            if (!cityId) return;
 
-            // Example using AJAX to get landmarks by region ID
+            // Example using AJAX to get landmarks by city ID
             $.ajax({
-                url: "{{ route('fetch_region_landmarks') }}",
+                url: "{{ route('fetch_city_landmarks') }}",
                 method: "POST",
                 data: {
                     _token: '{{ csrf_token() }}',
-                    region_id: regionId
+                    city_id: cityId
                 },
                 success: function(response) {
                     if (response.status == true) {

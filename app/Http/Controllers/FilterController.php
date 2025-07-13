@@ -91,9 +91,9 @@ class FilterController extends Controller
         ]);
     }
 
-    public function fetchRegionLandmarks(Request $request)
+    public function fetchCityLandmarks(Request $request)
     {
-        $cities = City::where('region_id', $request->region_id)->where('status', 1)->pluck('id')->toArray();
+        $cities = City::where('id', $request->city_id)->where('status', 1)->pluck('id')->toArray();
         $landMarks = LandMark::whereIn('city_id', $cities)->get();
         return response()->json([
             'status' => true, 
