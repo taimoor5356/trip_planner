@@ -6,7 +6,10 @@ use App\Models\Accommodation;
 use App\Models\BuildingType;
 use App\Models\Built;
 use App\Models\Category;
+use App\Models\City;
 use App\Models\PropertyAmenity;
+use App\Models\Province;
+use App\Models\Region;
 use App\Models\Town;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -29,17 +32,17 @@ class AccomodationImport implements ToCollection, WithChunkReading
                     continue;
                 }
                 $accommodationName = $row[0];
-                $buildingTypeId = $row[1];
-                $builtId = $row[2];
+                $buildingTypeName = $row[1];
+                $builtNames = $row[2];
                 $default = $row[3];
                 $minimumCategory = $row[4];
                 $maximumCategory = $row[5];
                 $propertyAmenities = $row[6];
                 $location = $row[7];
-                $town = $row[8];
-                // $city = trim($row[9]);
-                // $region = $row[10];
-                // $province = $row[11];
+                $townName = $row[8];
+                $cityName = $row[9];
+                $regionName = $row[10];
+                $provinceName = $row[11];
                 $noOfRooms = $row[12];
                 $frontDeskContact = $row[13];
                 $salesContact = $row[14];
@@ -47,26 +50,109 @@ class AccomodationImport implements ToCollection, WithChunkReading
                 $instaLink = $row[16];
                 $websiteLink = $row[17];
                 
-                // Accommodation
+                // Accommodations
                 $accommodation = Accommodation::where('name', $accommodationName)->first();
                 if (isset($accommodation)) {
                     $accommodation = $accommodation;
                 } else {
                     $accommodation = new Accommodation();
                 }
+                
+                // Buildings
+                $building = BuildingType::where('name', $buildingTypeName)->first();
+                if (!isset($building)) {
+                    $building = new BuildingType();
+                    $building->name = $buildingTypeName;
+                    $building->save();
+                }
+                
+                // Builts
+                foreach(explode(',', $builtNames) as $bltName) {
+                    $built = Built::where('name', $bltName)->first();
+                    if (!isset($built)) {
+                        $built = new Built();
+                        $built->name = $bltName;
+                        $built->status = 1;
+                        $built->save();
+                    }
+                }
+                $builtIds = Built::whereIn('name', explode(',', $builtNames))->pluck('id')->toArray();
+                
+                // Categories
+                $minCategory = Category::where('name', $minimumCategory)->first();
+                if (!isset($minCategory)) {
+                    $minCategory = new Category();
+                    $minCategory->name = $minimumCategory;
+                    $minCategory->status = 1;
+                    $minCategory->save();
+                }
+                $maxCategory = Category::where('name', $maximumCategory)->first();
+                if (!isset($maxCategory)) {
+                    $maxCategory = new Category();
+                    $maxCategory->name = $maximumCategory;
+                    $maxCategory->status = 1;
+                    $maxCategory->save();
+                }
+                $categoryIds = Category::whereIn('name', [$minimumCategory, $maximumCategory])->pluck('id')->toArray();
 
-                $building = BuildingType::where('name', $buildingTypeId)->first();
-                $built = Built::where('name', $builtId)->first();
-                $category = Category::whereIn('name', [$minimumCategory, $maximumCategory])->pluck('id')->toArray();
-                $propertyAmenity = PropertyAmenity::whereIn('name', explode(', ', $propertyAmenities))->pluck('id')->toArray();
-                $town = Town::where('name', $town)->first();
+                // Property Amenities
+                foreach(explode(',', $propertyAmenities) as $propertyAmenityName) {
+                    $propertyAmenity = PropertyAmenity::where('name', $propertyAmenityName)->first();
+                    if (!isset($propertyAmenity)) {
+                        $propertyAmenity = new PropertyAmenity();
+                        $propertyAmenity->name = $propertyAmenityName;
+                        $propertyAmenity->status = 1;
+                        $propertyAmenity->save();
+                    }
+                }
+                $propertyAmenityIds = PropertyAmenity::whereIn('name', explode(',', $propertyAmenities))->pluck('id')->toArray();
+                
+                // Province
+                $province = Province::where('name', $provinceName)->first();
+                if (!isset($province)) {
+                    $province = new Province();
+                }
+                $province->name = $provinceName;
+                $province->country_id = 1;
+                $province->status = 1;
+                $province->save();
+
+                // Region
+                $region = Region::where('name', $regionName)->first();
+                if (!isset($region)) {
+                    $region = new Region();
+                }
+                $region->name = $regionName;
+                $region->province_id = $province->id;
+                $region->status = 1;
+                $region->save();
+
+                // City
+                $city = City::where('name', $cityName)->first();
+                if (!isset($city)) {
+                    $city = new City();
+                }
+                $city->name = $cityName;
+                $city->region_id = $region->id;
+                $city->status = 1;
+                $city->save();
+
+                // Towns
+                $town = Town::where('name', $townName)->first();
+                if (!isset($town)) {
+                    $town = new Town();
+                }
+                $town->name = $townName;
+                $town->city_id = $city->id;
+                $town->status = 1;
+                $town->save();
                 
                 $accommodation->name = $accommodationName ?? 'NIL';
                 $accommodation->building_type_id = isset($building) ? $building->id : null;
-                $accommodation->built_id = isset($built) ? $built->id : null;
+                $accommodation->built_id = json_encode($builtIds);
                 $accommodation->default_status = $default == 'No' ? 0 : 1;
-                $accommodation->category_id = json_encode($category);
-                $accommodation->property_amenities_id = json_encode($propertyAmenity);
+                $accommodation->category_id = json_encode($categoryIds);
+                $accommodation->property_amenities_id = json_encode($propertyAmenityIds);
                 $accommodation->location = $location ?? null;
                 $accommodation->town_id = isset($town) ? $town->id : null;
                 $accommodation->num_of_rooms = $noOfRooms;

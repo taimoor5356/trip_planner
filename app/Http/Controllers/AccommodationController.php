@@ -44,7 +44,7 @@ class AccommodationController extends Controller
                 return ucwords($row->building?->name);
             })
             ->addColumn('built_id', function ($row) {
-                return ucwords($row->built?->name);
+                return ucwords($row->built_names_list);
             })
             ->addColumn('default_status', function ($row) {
                 return ucwords($row->default_status == "yes" ? 'Yes' : 'No');
@@ -217,15 +217,15 @@ class AccommodationController extends Controller
         $data['buildingTypes'] = BuildingType::where('status', 1)->get();
         $data['builtTypes'] = Built::where('status', 1)->get();
         $data['roomCategories'] = RoomCategory::where('status', 1)->get();
-// ✅ fetch prices for each room category
-$data['roomCategoryAmounts'] = RoomCategoryCost::where('accommodation_id', $id)
-    ->pluck('price', 'room_category_id')
-    ->toArray();
+        // ✅ fetch prices for each room category
+        $data['roomCategoryAmounts'] = RoomCategoryCost::where('accommodation_id', $id)
+            ->pluck('price', 'room_category_id')
+            ->toArray();
 
-// ✅ fetch which one is default
-$data['roomCategoryDefault'] = RoomCategoryCost::where('accommodation_id', $id)
-    ->where('is_default', 1)
-    ->value('room_category_id');
+        // ✅ fetch which one is default
+        $data['roomCategoryDefault'] = RoomCategoryCost::where('accommodation_id', $id)
+            ->where('is_default', 1)
+            ->value('room_category_id');
         $data['categories'] = Category::where('status', 1)->get();
         $data['propertyAmenities'] = PropertyAmenity::where('status', 1)->get();
         $data['towns'] = Town::where('status', 1)->get();

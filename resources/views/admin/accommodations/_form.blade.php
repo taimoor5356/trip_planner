@@ -34,24 +34,11 @@
     <div class="input-group input-group-merge">
         <select name="default_status" id="default_status" class="form-control">
             <option value="" disabled selected>Select Status</option>
-            <option value="no" {{ isset($record) ? ($record->default_status == "no" ? 'selected' : '') : '' }}>No</option>
-            <option value="yes" {{ isset($record) ? ($record->default_status == "yes" ? 'selected' : '') : '' }}>Yes</option>
+            <option value="no" {{ isset($record) ? ($record->default_status == "0" ? 'selected' : '') : '' }}>No</option>
+            <option value="yes" {{ isset($record) ? ($record->default_status == "1" ? 'selected' : '') : '' }}>Yes</option>
         </select>
     </div>
 </div>
-<!-- <div class="mb-3">
-    <label class="form-label" for="room_category_id">Room Categories</label>
-    <div class="input-group input-group-merge">
-        <select name="room_category_id[]" id="room_category_id" class="form-control select2" multiple>
-            <option value="">Select Room Category</option>
-            @if(!empty($roomCategories))
-            @foreach($roomCategories as $roomCategory)
-            <option value="{{$roomCategory->id}}" {{(isset($record) && $record->room_category_id) ? (in_array($roomCategory->id, json_decode($record->room_category_id)) ? 'selected' : '') : ''}}>{{$roomCategory->name}}</option>
-            @endforeach
-            @endif
-        </select>
-    </div>
-</div> -->
 <div class="mb-3">
     <label class="form-label" for="category_id">Categories</label>
     <div class="input-group input-group-merge">
@@ -65,7 +52,7 @@
         </select>
     </div>
 </div>
-<div class="mb-3">
+<!-- <div class="mb-3">
     <label class="form-label" for="room_category_id">Room Categories</label>
     <div class="input-group input-group-merge">
         <select name="room_category_id[]" id="room_category_id" class="form-control select2" multiple>
@@ -77,7 +64,7 @@
             @endforeach
         </select>
     </div>
-</div>
+</div> -->
 
 <div class="col-12 room-categories-container d-none">
     <div class="mb-3">

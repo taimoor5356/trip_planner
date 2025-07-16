@@ -15,16 +15,17 @@ class Accommodation extends Model
         return $this->belongsTo(BuildingType::class, 'building_type_id', 'id');
     }
 
-    public function built() {
-        return $this->belongsTo(Built::class, 'built_id', 'id');
-    }
-
     public function town() {
         return $this->belongsTo(Town::class, 'town_id', 'id');
     }
 
     public function roomCategories() {
         return $this->hasMany(RoomCategoryCost::class, 'accommodation_id', 'id');
+    }
+
+    public function getBuiltNamesListAttribute() {
+        $ids = json_decode($this->built_id ?: '[]');
+        return Built::whereIn('id', $ids)->pluck('name')->implode(', ');
     }
 
     public function getCategoryNamesListAttribute() {
