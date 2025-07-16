@@ -47,7 +47,7 @@ class AccommodationController extends Controller
                 return ucwords($row->built_names_list);
             })
             ->addColumn('default_status', function ($row) {
-                return ucwords($row->default_status == "yes" ? 'Yes' : 'No');
+                return ucwords($row->default_status == "1" ? 'Yes' : 'No');
             })
             ->addColumn('status', function ($row) {
                 return ucwords($row->status == 1 ? 'Active' : 'In Active');
