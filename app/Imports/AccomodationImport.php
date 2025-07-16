@@ -151,7 +151,15 @@ class AccomodationImport implements ToCollection, WithChunkReading
                 $accommodation->building_type_id = isset($building) ? $building->id : null;
                 $accommodation->built_id = json_encode($builtIds);
                 $accommodation->default_status = $default == 'No' ? 0 : 1;
-                $accommodation->category_id = json_encode($categoryIds);
+                if (!empty($categoryIds) && is_array($categoryIds)) {
+                    $min = min($categoryIds);
+                    $max = max($categoryIds);
+
+                    $accommodation->category_id = json_encode(range($min, $max));
+                } else {
+                    $accommodation->category_id = null;
+                }
+
                 $accommodation->property_amenities_id = json_encode($propertyAmenityIds);
                 $accommodation->location = $location ?? null;
                 $accommodation->town_id = isset($town) ? $town->id : null;

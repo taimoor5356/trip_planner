@@ -165,7 +165,14 @@ class AccommodationController extends Controller
             $accommodation->built_id = json_encode($request->built_id) ?? null;
             $accommodation->default_status = !empty($request->default_status) ? '1' : '0';
             $accommodation->status = $request->status ?? 1;
-            $accommodation->category_id = json_encode($request->category_id) ?? null;
+            if (!empty($request->category_id) && is_array($request->category_id)) {
+                $min = min($request->category_id);
+                $max = max($request->category_id);
+
+                $accommodation->category_id = json_encode(range($min, $max));
+            } else {
+                $accommodation->category_id = null;
+            }
             $accommodation->property_amenities_id = json_encode($request->property_amenities_id) ?? null;
             $accommodation->location = $request->location ?? null;
             $accommodation->town_id = $request->town_id ?? null;
