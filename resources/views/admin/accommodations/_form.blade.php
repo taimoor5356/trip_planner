@@ -34,8 +34,8 @@
     <div class="input-group input-group-merge">
         <select name="default_status" id="default_status" class="form-control">
             <option value="" disabled selected>Select Status</option>
-            <option value="no" {{ isset($record) ? ($record->default_status == "0" ? 'selected' : '') : '' }}>No</option>
-            <option value="yes" {{ isset($record) ? ($record->default_status == "1" ? 'selected' : '') : '' }}>Yes</option>
+            <option value="0" {{ isset($record) ? ($record->default_status == "0" ? 'selected' : '') : '' }}>No</option>
+            <option value="1" {{ isset($record) ? ($record->default_status == "1" ? 'selected' : '') : '' }}>Yes</option>
         </select>
     </div>
 </div>

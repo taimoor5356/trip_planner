@@ -163,7 +163,7 @@ class AccommodationController extends Controller
             $accommodation->name = $request->name;
             $accommodation->building_type_id = $request->building_type_id ?? null;
             $accommodation->built_id = json_encode($request->built_id) ?? null;
-            $accommodation->default_status = $request->default_status ?? 'no';
+            $accommodation->default_status = !empty($request->default_status) ? '1' : '0';
             $accommodation->status = $request->status ?? 1;
             $accommodation->category_id = json_encode($request->category_id) ?? null;
             $accommodation->property_amenities_id = json_encode($request->property_amenities_id) ?? null;
