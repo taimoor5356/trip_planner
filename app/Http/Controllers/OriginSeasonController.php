@@ -76,7 +76,7 @@ class OriginSeasonController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = OriginSeason::orderBy('id', 'asc');
+            $records = OriginSeason::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

@@ -77,7 +77,7 @@ class CityController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = City::orderBy('id', 'asc');
+            $records = City::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

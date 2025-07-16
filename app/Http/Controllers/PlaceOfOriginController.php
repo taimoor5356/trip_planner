@@ -71,7 +71,7 @@ class PlaceOfOriginController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = PlaceOfOrigin::orderBy('id', 'asc');
+            $records = PlaceOfOrigin::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

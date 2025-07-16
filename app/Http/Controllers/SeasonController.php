@@ -83,7 +83,7 @@ class SeasonController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Season::orderBy('id', 'asc');
+            $records = Season::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

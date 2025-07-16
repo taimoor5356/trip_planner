@@ -117,6 +117,7 @@
                 ajax: {
                     url: "{{url('admin/property-amenities/list')}}",
                 },
+order: [],
                 columns: [{
                         name: 'sr_no',
                         data: 'sr_no'

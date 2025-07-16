@@ -91,7 +91,7 @@ class LandMarkSeasonController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = LandMarkSeason::orderBy('id', 'asc');
+            $records = LandMarkSeason::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

@@ -83,7 +83,7 @@ class TripController extends Controller
         //
         if ($request->ajax()) {
             if (Auth::user()->hasRole('admin')) {
-                $records = Trip::orderBy('id', 'asc');
+                $records = Trip::orderBy('id', 'desc');
             } else if (Auth::user()->hasRole('customer')) {
                 $records = Trip::where('user_id', Auth::user()->id)->orderBy('id', 'asc');
             }

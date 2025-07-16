@@ -77,7 +77,7 @@ class RegionController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Region::orderBy('id', 'asc');
+            $records = Region::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

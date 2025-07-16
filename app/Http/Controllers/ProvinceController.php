@@ -76,7 +76,7 @@ class ProvinceController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Province::orderBy('id', 'asc');
+            $records = Province::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

@@ -73,7 +73,7 @@ class PropertyAmenityController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = PropertyAmenity::orderBy('id', 'asc');
+            $records = PropertyAmenity::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

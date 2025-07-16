@@ -77,7 +77,7 @@ class CategoryController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Category::orderBy('id', 'asc');
+            $records = Category::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

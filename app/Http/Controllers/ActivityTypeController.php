@@ -74,7 +74,7 @@ class ActivityTypeController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = ActivityType::orderBy('id', 'asc');
+            $records = ActivityType::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

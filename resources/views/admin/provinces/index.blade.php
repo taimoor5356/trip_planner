@@ -119,6 +119,7 @@
                     ajax: {
                         url: "{{url('admin/provinces/list')}}",
                     },
+order: [],
                     columns: [{
                             name: 'sr_no',
                             data: 'sr_no'

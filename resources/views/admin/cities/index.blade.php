@@ -119,6 +119,7 @@
                     ajax: {
                         url: "{{url('admin/cities/list')}}",
                     },
+                    order: [],
                     columns: [{
                             name: 'sr_no',
                             data: 'sr_no'

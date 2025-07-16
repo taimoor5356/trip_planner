@@ -104,7 +104,7 @@ class VehicleController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Vehicle::orderBy('id', 'asc');
+            $records = Vehicle::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

@@ -95,7 +95,7 @@ class LandMarkController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = LandMark::orderBy('id', 'asc');
+            $records = LandMark::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

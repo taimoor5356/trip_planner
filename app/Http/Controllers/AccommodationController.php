@@ -120,7 +120,7 @@ class AccommodationController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Accommodation::orderBy('id', 'asc');
+            $records = Accommodation::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

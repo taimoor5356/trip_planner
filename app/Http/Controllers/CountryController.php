@@ -72,7 +72,7 @@ class CountryController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Country::orderBy('id', 'asc');
+            $records = Country::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

@@ -86,7 +86,7 @@ class RoomCategoryCostController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = RoomCategoryCost::orderBy('id', 'asc');
+            $records = RoomCategoryCost::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

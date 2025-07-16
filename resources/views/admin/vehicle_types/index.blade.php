@@ -118,6 +118,7 @@
                     ajax: {
                         url: "{{url('admin/vehicle-types/list')}}",
                     },
+                    order: [],
                     columns: [{
                             name: 'sr_no',
                             data: 'sr_no'

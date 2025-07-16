@@ -74,7 +74,7 @@ class BuildingTypeController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = BuildingType::orderBy('id', 'asc');
+            $records = BuildingType::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

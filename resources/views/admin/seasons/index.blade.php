@@ -120,6 +120,7 @@
                     ajax: {
                         url: "{{url('admin/seasons/list')}}",
                     },
+                    order: [],
                     columns: [{
                             name: 'sr_no',
                             data: 'sr_no'

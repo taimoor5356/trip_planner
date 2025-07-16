@@ -74,7 +74,7 @@ class BuiltTypeController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Built::orderBy('id', 'asc');
+            $records = Built::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

@@ -83,7 +83,7 @@ class UserController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = User::orderBy('id', 'asc');
+            $records = User::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['header_title'] = $this->headerTitle;

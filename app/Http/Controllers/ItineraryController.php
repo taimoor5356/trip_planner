@@ -106,7 +106,7 @@ class ItineraryController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Itinerary::orderBy('id', 'asc');
+            $records = Itinerary::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

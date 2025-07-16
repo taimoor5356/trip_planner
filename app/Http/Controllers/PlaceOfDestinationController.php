@@ -70,7 +70,7 @@ class PlaceOfDestinationController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = PlaceOfDestination::orderBy('id', 'asc');
+            $records = PlaceOfDestination::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

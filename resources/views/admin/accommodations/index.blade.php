@@ -130,6 +130,7 @@
                 ajax: {
                     url: "{{url('admin/accommodations/list')}}",
                 },
+order: [],
                 columns: [{
                         name: 'sr_no',
                         data: 'sr_no'

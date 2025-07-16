@@ -79,7 +79,7 @@ class TownController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Town::orderBy('id', 'asc');
+            $records = Town::orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

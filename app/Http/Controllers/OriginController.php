@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CentralLogics\Helpers;
+use App\Imports\OriginImport;
 use App\Models\Origin;
 use App\Models\OriginDestination;
 use App\Models\Region;
@@ -90,10 +91,10 @@ class OriginController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Origin::with('images')->orderBy('id', 'asc');
+            $records = Origin::with('images')->orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
-        $data['origins'] = Origin::with('images')->orderBy('id', 'asc')->get();
+        $data['origins'] = Origin::with('images')->orderBy('id', 'desc')->get();
         $data['url_segment_two'] = request()->segment(2);
         $data['header_title'] = $this->headerTitle;
         return view('admin.origins.index', $data);
@@ -293,12 +294,11 @@ class OriginController extends Controller
 
     public function importData(Request $request)
     {     
-dd('Under Construction');   
         try {
             $originalTimeLimit = ini_get('max_execution_time');
             set_time_limit(7200);
             gc_disable();
-            Excel::import(new AccomodationImport(), $request->file('file'));
+            Excel::import(new OriginImport(), $request->file('file'));
 
             exit;
             gc_enable();

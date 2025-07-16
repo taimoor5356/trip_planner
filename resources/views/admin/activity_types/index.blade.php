@@ -117,6 +117,7 @@
                 ajax: {
                     url: "{{url('admin/activity-types/list')}}",
                 },
+order: [],
                 columns: [{
                         name: 'sr_no',
                         data: 'sr_no'

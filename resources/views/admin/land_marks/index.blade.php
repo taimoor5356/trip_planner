@@ -121,6 +121,7 @@
                 ajax: {
                     url: "{{url('admin/land-marks/list')}}",
                 },
+order: [],
                 columns: [{
                         name: 'sr_no',
                         data: 'sr_no'
