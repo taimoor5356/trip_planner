@@ -325,7 +325,7 @@
                     response.regionSeasonDays.forEach(d => {
                         let selected = (d.id == preselectedTripDuration) ? 'selected' : '';
                         if (d.days_nights != null || d.days_nights != undefined) {
-                            _html += `<option value="${d.days_nights.toLowerCase().replace(/\s+/g, '_')}" ${selected}>${d.days_nights ?? 0}</option>`;
+                            _html += `<option value="${d.days_nights.toLowerCase().replace(/\s+/g, '_')}" ${selected}>${d.days_nights.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}</option>`;
                         }
                     });
                     $('#trip_duration').html(_html);
