@@ -59,17 +59,6 @@ class FilterController extends Controller
         ]);
     }
 
-    // public function fetchPeopleWiseVehicles(Request $request)
-    // {
-    //     // $regionSeasonDays = VehicleRegion::where('region_id', $request->region_id)->pluck('vehicle_id')->toArray();
-    //     $vehicles = Vehicle::where('region_id', $request->region_id)->whereRaw('(capacity_adults + capacity_children) >= ?', [$request->total_people])
-    //             ->get();
-    //     return response()->json([
-    //         'status' => true,
-    //         'vehicles' => $vehicles
-    //     ]);
-    // }
-
     public function fetchPeopleWiseVehicles(Request $request)
     {
         $totalPeople = (int) $request->input('total_people');
