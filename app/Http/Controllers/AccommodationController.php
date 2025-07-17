@@ -268,6 +268,17 @@ class AccommodationController extends Controller
         }
     }
 
+    public function trashed(Request $request)
+    {
+        if ($request->ajax()) {
+            $records = Accommodation::onlyTrashed()->orderBy('id', 'asc');
+            return $this->datatables($request, $records, 'trashed');
+        }
+        $data['header_title'] = 'Trashed Accommodations';
+        $data['url_segment_two'] = request()->segment(2);
+        return view('admin.accommodations.trashed', $data);
+    }
+
     public function importData(Request $request)
     {     
         try {

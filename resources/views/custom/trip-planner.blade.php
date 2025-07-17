@@ -2,6 +2,13 @@
 @section('_styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+@php 
+    $img = '';
+    $imgData = \App\Models\RegionImage::where('region_id', Request::get('destination'))->first();
+    if (isset($imgData)) {
+        $img = $imgData->image;
+    }
+@endphp
 <style>
     .butns {
         width: auto !important;
@@ -9,7 +16,7 @@
         align-items: baseline;
     }
     .img-card {
-        background-image: url("{{ asset('imgs/regions/'.\App\Models\RegionImage::where('region_id', Request::get('destination'))->first()->image) }}");
+        background-image: url("{{ asset('imgs/regions/'.$img) }}");
         height: 300px;
         background-position: fixed;
         background-size: cover;
@@ -106,8 +113,12 @@
     <div class="container flex-grow-1 container-p-y d-flex justify-content-center mt-4">
         @php
         $fetchItinerary = \App\Models\Itinerary::where('mode_of_travel', $queryParams['mode_of_travel'])->where('origin_id', $queryParams['starting_point'])->first();
-        $itineraryDailyPlans = \App\Models\ItineraryDayWisePlan::with('destination.image')->where('itinerary_id', $fetchItinerary->id)->get();
+        $itineraryDailyPlans = [];
+        if (isset($fetchItinerary)) {
+            $itineraryDailyPlans = \App\Models\ItineraryDayWisePlan::with('destination.image')->where('itinerary_id', $fetchItinerary->id)->get();
+        }
         @endphp
+        @if (isset($fetchItinerary))
         <div class="card col-lg-7">
             <input type="hidden" name="itinerary_id" value="{{ $fetchItinerary->id }}">
             <div class="card-header p-0" style="margin-bottom: 30px; overflow: hidden; border-radius: 5px 5px 0 0;">
@@ -320,12 +331,14 @@
                                                         <h6 class="text-dark fw-bold"><i class="bx bx-music mb-1"></i> Activities:</h6>
                                                         <ul style="padding-left: 15px;">
                                                             @isset($landMark)
+                                                            @if (!empty($landMark->activity_ids))
                                                                 @foreach(json_decode($landMark->activity_ids) as $landMarkActivity)
                                                                 @php 
                                                                     $activity = \App\Models\ActivityType::where('id', $landMarkActivity)->first();
                                                                 @endphp
                                                                     <li>{{ isset($activity) ? $activity->name : '' }}</li>
                                                                 @endforeach
+                                                            @endif
                                                             @endisset
                                                         </ul>
                                                     </div>
@@ -348,6 +361,7 @@
                                                                 @endphp
 
                                                                 @if($accommodations->count())
+                                                                @if ($accommod)
                                                                     <div class="row accommodation-data-list">
                                                                         <div>
                                                                             <small class="text-dark text-decoration-underline fw-bold">{{ $accommod->name }}</small>
@@ -454,6 +468,7 @@
                                                                             <span class="carousel-control-next-icon"></span>
                                                                         </button> -->
                                                                     </div>
+                                                                @endif
                                                                 @else
                                                                     <p>No accommodations found.</p>
                                                                 @endif
@@ -555,6 +570,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
     <div class="modal fade modal-center" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="login-modal" aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
@@ -631,7 +647,7 @@
 
                                 <input type="hidden" name="trip_login" id="trip_login" value="trip_login">
                                 <input type="hidden" name="trip_signup" id="trip_signup" value="trip_signup">
-                                <input type="hidden" name="book_itinerary_id" id="book_itinerary_id" value="{{$fetchItinerary->id}}">
+                                <input type="hidden" name="book_itinerary_id" id="book_itinerary_id" value="@isset($fetchItinerary){{$fetchItinerary->id}}@endisset">
                                 <input type="hidden" name="link" id="link" value="{{url()->full()}}">
 
                                 <div class="mb-3">

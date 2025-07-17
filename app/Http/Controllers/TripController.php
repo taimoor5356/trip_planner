@@ -236,6 +236,7 @@ dd('Under Construction');
             $data['header_title'] = 'Trip Designed';
             return response(View::make('custom.trip-planner', $data)->render());
         } catch (\Exception $e) {
+            dd($e);
             // Log error for debugging
             \Log::error('Blade error: ' . $e->getMessage());
 

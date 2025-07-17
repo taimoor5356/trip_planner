@@ -16,4 +16,9 @@ class City extends Model
     {
         return $this->belongsTo(Region::class, 'region_id', 'id');
     }
+
+    public function image()
+    {
+        return $this->hasMany(CityImage::class, 'city_id', 'id');
+    }
 }

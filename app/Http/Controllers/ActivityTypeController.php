@@ -161,6 +161,17 @@ class ActivityTypeController extends Controller
         }
     }
 
+    public function trashed(Request $request)
+    {
+        if ($request->ajax()) {
+            $records = ActivityType::onlyTrashed()->orderBy('id', 'asc');
+            return $this->datatables($request, $records, 'trashed');
+        }
+        $data['header_title'] = 'Trashed Activity Types';
+        $data['url_segment_two'] = request()->segment(2);
+        return view('admin.activity_types.trashed', $data);
+    }
+
     public function importData(Request $request)
     {     
         try {
