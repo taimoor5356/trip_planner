@@ -31,10 +31,10 @@ class FilterController extends Controller
         $availableByModeOfTravelAndRegions = OriginDestination::with('destinationRegion')
             ->where('origin_id', $request->starting_point)
             ->where('mode_of_travel', $request->mode_of_travel);
-        if (!empty($request->itinerary_module)) {
-            $itineraryRegionIds = Itinerary::where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->pluck('destination_id')->toArray();
-            $availableByModeOfTravelAndRegions = $availableByModeOfTravelAndRegions->whereNotIn('destination_id', $itineraryRegionIds);
-        }
+        // if (!empty($request->itinerary_module)) {
+        //     $itineraryRegionIds = Itinerary::where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->pluck('destination_id')->toArray();
+        //     $availableByModeOfTravelAndRegions = $availableByModeOfTravelAndRegions->whereNotIn('destination_id', $itineraryRegionIds);
+        // }
         if (empty($request->itinerary_module)) {
             $availableByModeOfTravelAndRegions = $availableByModeOfTravelAndRegions->whereIn('destination_id', $regionSeasons);
         }
@@ -50,9 +50,9 @@ class FilterController extends Controller
 
     public function fetchDestinationWiseDays(Request $request)
     {
-        // $regionSeasonDays = RegionSeason::where('region_id', $request->destination)
-        //         ->get();
-        $regionSeasonDays = OriginDestination::with('destinationRegion')->where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->where('destination_id', $request->destination)->get();
+        $itineraryRegionDays = Itinerary::where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->where('destination_id', $request->destination)->pluck('trip_duration')->toArray();
+
+        $regionSeasonDays = OriginDestination::with('destinationRegion')->where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->where('destination_id', $request->destination)->whereNotIn('days_nights', $itineraryRegionDays)->get();
         return response()->json([
             'status' => true,
             'regionSeasonDays' => $regionSeasonDays

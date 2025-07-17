@@ -152,7 +152,7 @@ class OriginController extends Controller
                     'origin_id' => $originId,
                     'destination_id' => $destinationId,
                     'mode_of_travel' => 1, // by road
-                    'days_nights' => $day,
+                    'days_nights' => str_replace(' ', '_', strtolower($day)),
                 ]);
             }
 

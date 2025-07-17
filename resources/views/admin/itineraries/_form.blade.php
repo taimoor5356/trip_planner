@@ -180,7 +180,7 @@
                         const value = d.days_nights?.toLowerCase().replace(/\s+/g, '_') ?? '';
                         const selected = (value == preselectedTripDuration) ? 'selected' : '';
                         if (value) {
-                            _html += `<option value="${value}" ${selected}>${d.days_nights}</option>`;
+                            _html += `<option value="${value}" ${selected}>${d.days_nights.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}</option>`;
                         }
                     });
                     $('#trip_duration').html(_html);
