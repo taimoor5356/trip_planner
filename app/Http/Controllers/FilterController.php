@@ -31,10 +31,7 @@ class FilterController extends Controller
         $availableByModeOfTravelAndRegions = OriginDestination::with('destinationRegion')
             ->where('origin_id', $request->starting_point)
             ->where('mode_of_travel', $request->mode_of_travel);
-        // if (!empty($request->itinerary_module)) {
-        //     $itineraryRegionIds = Itinerary::where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->pluck('destination_id')->toArray();
-        //     $availableByModeOfTravelAndRegions = $availableByModeOfTravelAndRegions->whereNotIn('destination_id', $itineraryRegionIds);
-        // }
+            
         if (empty($request->itinerary_module)) {
             $availableByModeOfTravelAndRegions = $availableByModeOfTravelAndRegions->whereIn('destination_id', $regionSeasons);
         }
