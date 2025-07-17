@@ -62,7 +62,6 @@ class FilterController extends Controller
     public function fetchPeopleWiseVehicles(Request $request)
     {
         $totalPeople = (int) $request->input('total_people');
-        $modeOfTravel = $request->input('mode_of_travel');
 
         // Fetch all vehicles
         $vehicles = Vehicle::query();
