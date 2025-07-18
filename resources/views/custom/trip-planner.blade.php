@@ -288,7 +288,7 @@
                                                         <div class="row">
                                                             @foreach(json_decode($itinerary->landmarks) as $landMarkId)
                                                                 @php 
-                                                                    $landMark = \App\Models\LandMark::with('activities.activity')->with('image')->where('id', $landMarkId)->first();
+                                                                    $landMark = \App\Models\LandMark::with('activities.activity', 'image')->where('id', $landMarkId)->first();
                                                                 @endphp
                                                                 <div class="col-md-4 mb-3">
                                                                     <div class="card h-100" data-bs-toggle="modal" data-bs-target="#land-mark-activities-modal{{ $itinerary->id }}{{ $landMark->id }}" style="cursor:pointer">
@@ -351,10 +351,10 @@
                                                                     $cityIds = \App\Models\City::where('status', 1)->whereIn('region_id', $regionIds)->pluck('id')->toArray();
                                                                     $townIds = \App\Models\Town::where('status', 1)->whereIn('city_id', $cityIds)->pluck('id')->toArray();
                                                                     $accommodations = \App\Models\Accommodation::with('roomCategories.roomCategory', 'images')
-                                                                        ->whereIn('town_id', $townIds)
+                                                                        ->where('city_id', $itinerary->destination_id)
                                                                         ->get();
                                                                     $accommod = \App\Models\Accommodation::with('roomCategories.roomCategory', 'images')
-                                                                        ->whereIn('town_id', $townIds)
+                                                                        ->where('city_id', $itinerary->destination_id)
                                                                         ->where('default_status', 1)
                                                                         ->first();
                                                                 @endphp
@@ -429,7 +429,7 @@
                                                                                         <div class="row">
                                                                                             @foreach($accommodations as $accommo)
                                                                                                 <div class="col-md-3 mb-3">
-                                                                                                    <a href="{{ route('update_design_my_trip', [$accommo->id, $accommo->town_id]) }}" class="text-dark">
+                                                                                                    <a href="{{ route('update_design_my_trip', [$accommo->id, $itinerary->destination_id]) }}" class="text-dark">
                                                                                                         <div class="card h-100" style="cursor:pointer">
                                                                                                             <div id="accommodationCarousel{{$key1}}" class="carousel slide" data-bs-ride="carousel">
                                                                                                                 <div class="carousel-inner">

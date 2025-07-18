@@ -95,6 +95,19 @@
     </div>
 </div>
 <div class="mb-3">
+    <label class="form-label" for="city_id">City</label>
+    <div class="input-group input-group-merge">
+        <select name="city_id" id="city_id" class="form-control">
+            <option value="">Select City</option>
+            @if(!empty($cities))
+            @foreach($cities as $city)
+            <option value="{{$city->id}}" {{isset($record) ? (($record->city_id == $city->id) ? 'selected' : '') : ''}}>{{$city->name}}</option>
+            @endforeach
+            @endif
+        </select>
+    </div>
+</div>
+<div class="mb-3">
     <label class="form-label" for="town_id">Town</label>
     <div class="input-group input-group-merge">
         <select name="town_id" id="town_id" class="form-control">
@@ -168,6 +181,31 @@ $(document).ready(function () {
     $('.select2').select2({
         placeholder: 'Select',
         allowClear: true
+    });
+
+    $(document).on('change', '#city_id', function () {
+         let _this = $(this);
+         if (_this.val() != '') {
+            $.ajax({
+                url: "{{ route('get_city_towns') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    city_id: _this.val()
+                },
+                success:function(response) {
+                    var _html = '<option value="">Select Town</option>';
+                    if (response.status == true) {
+                        response.towns.forEach(d => {
+                            _html += `
+                                <option value="${d.id}">${d.name}</option>
+                            `;
+                        });
+                        $('#town_id').html(_html);
+                    }
+                }
+            });
+         }
     });
 
     const allRoomCategories = @json($roomCategories);

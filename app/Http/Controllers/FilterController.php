@@ -9,6 +9,7 @@ use App\Models\OriginDestination;
 use App\Models\Region;
 use App\Models\RegionSeason;
 use App\Models\Season;
+use App\Models\Town;
 use App\Models\Vehicle;
 use App\Models\VehicleRegion;
 use Carbon\Carbon;
@@ -91,7 +92,6 @@ class FilterController extends Controller
         ]);
     }
     
-    
     // changes by huzaifa
     public function fetchLandmarks(Request $request)
     {
@@ -104,4 +104,14 @@ class FilterController extends Controller
         ]);
     }
     // changes by huzaifa
+
+    public function getCityTowns(Request $request) {
+        if (!empty($request->city_id)) {
+            $towns = Town::where('city_id', $request->city_id)->get();
+            return response()->json([
+                'status' => true,
+                'towns' => $towns
+            ]);
+        }
+    }
 }

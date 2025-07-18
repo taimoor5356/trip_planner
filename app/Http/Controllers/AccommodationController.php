@@ -15,6 +15,7 @@ use App\Models\PropertyAmenity;
 use App\Models\RoomCategoryCost;
 use App\Imports\AccomodationImport;
 use App\Models\AccommodationImage;
+use App\Models\City;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AccommodationController extends Controller
@@ -141,6 +142,7 @@ class AccommodationController extends Controller
         $data['categories'] = Category::where('status', 1)->get();
         $data['propertyAmenities'] = PropertyAmenity::where('status', 1)->get();
         $data['towns'] = Town::where('status', 1)->get();
+        $data['cities'] = City::where('status', 1)->get();
         return view('admin.accommodations.create', $data);
     }
 
@@ -175,6 +177,7 @@ class AccommodationController extends Controller
             }
             $accommodation->property_amenities_id = json_encode($request->property_amenities_id) ?? null;
             $accommodation->location = $request->location ?? null;
+            $accommodation->city_id = $request->city_id ?? null;
             $accommodation->town_id = $request->town_id ?? null;
             $accommodation->num_of_rooms = $request->num_of_rooms ?? null;
             $accommodation->front_desk_contact = $request->front_desk_contact ?? null;
@@ -236,6 +239,7 @@ class AccommodationController extends Controller
         $data['categories'] = Category::where('status', 1)->get();
         $data['propertyAmenities'] = PropertyAmenity::where('status', 1)->get();
         $data['towns'] = Town::where('status', 1)->get();
+        $data['cities'] = City::where('status', 1)->get();
         return view('admin.accommodations.edit', $data);
     }
 

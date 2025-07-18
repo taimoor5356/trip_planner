@@ -63,11 +63,11 @@ Route::get('/customer_logout', function (){
 
 Route::get('/trip-design-result', [TripController::class, 'designMyTrip'])->name('design_my_trip');
 
-Route::get('/update-trip-design-result/{accommodation_id}/{town_id}', function($accommodationId, $townId) {
-    Accommodation::where('town_id', $townId)->update([
+Route::get('/update-trip-design-result/{accommodation_id}/{city_id}', function($accommodationId, $cityId) {
+    Accommodation::where('city_id', $cityId)->update([
         'default_status' => 0
     ]);
-    Accommodation::where('id', $accommodationId)->update([
+    Accommodation::where('id', $accommodationId)->where('city_id', $cityId)->update([
         'default_status' => 1
     ]);
     return redirect()->back();
@@ -87,6 +87,7 @@ Route::post('/fetch-date-wise-destination', [FilterController::class, 'fetchDate
 Route::post('/fetch-destination-wise-days', [FilterController::class, 'fetchDestinationWiseDays'])->name('fetch_destination_wise_days');
 Route::post('/fetch-people-wise-vehicles', [FilterController::class, 'fetchPeopleWiseVehicles'])->name('fetch_people_wise_vehicles');
 Route::post('/fetch-city-landmarks', [FilterController::class, 'fetchCityLandmarks'])->name('fetch_city_landmarks');
+Route::post('/get-city-towns', [FilterController::class, 'getCityTowns'])->name('get_city_towns');
 
 // changes by huzaifa
 Route::post('/fetch-landmarks', [FilterController::class, 'fetchLandmarks'])->name('fetch_landmarks');
