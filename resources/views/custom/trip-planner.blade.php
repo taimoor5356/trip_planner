@@ -265,7 +265,6 @@
                             <div class="card-body p-0">
                                 <div class="mb-3">
                                     @foreach($itineraryDailyPlans as $key1 => $itinerary)
-
                                     <div class="accordion accordion-flush mb-3 p-0" id="dailyPlanFlush-{{$key1}}">
                                         <div class="accordion-item p-0" style="box-shadow: none !important;">
                                             <h2 class="accordion-header p-0">

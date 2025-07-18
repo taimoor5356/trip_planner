@@ -120,7 +120,7 @@
                                     <select name="trip_duration" id="trip_duration" class="form-control bg-light">
                                         <option value="" disabled selected>Number of Days</option>
                                         @foreach($regionSeasonDays as $regionSeasonD)
-                                            <option value="{{ str_replace(' ', '_', $regionSeasonD->days_nights) }}" {{ str_replace(' ', '_', $regionSeasonD->days_nights) == Request::get('trip_duration') ? 'selected' : '' }}>{{ $regionSeasonD->days_nights }}</option>
+                                            <option value="{{$regionSeasonD->days_nights}}" {{ $regionSeasonD->days_nights == Request::get('trip_duration') ? 'selected' : '' }}>{{ str_replace('_', ' ', ucwords(strtolower($regionSeasonD->days_nights))) }}</option>
                                         @endforeach
                                     </select>
                                 </div>

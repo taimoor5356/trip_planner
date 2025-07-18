@@ -121,7 +121,7 @@
                 ajax: {
                     url: "{{url('admin/itineraries/list')}}",
                 },
-order: [],
+                order: [],
                 columns: [{
                         name: 'sr_no',
                         data: 'sr_no'
@@ -149,10 +149,6 @@ order: [],
                     {
                         name: 'trip_duration',
                         data: 'trip_duration'
-                    },
-                    {
-                        name: 'status',
-                        data: 'status'
                     },
                     {
                         name: 'created_at',
