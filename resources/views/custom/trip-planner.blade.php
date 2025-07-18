@@ -355,11 +355,11 @@
                                                                         ->get();
                                                                     $accommod = \App\Models\Accommodation::with('roomCategories.roomCategory', 'images')
                                                                         ->whereIn('town_id', $townIds)
-                                                                        ->where('default_status', 'yes')
+                                                                        ->where('default_status', 1)
                                                                         ->first();
                                                                 @endphp
 
-                                                                @if($accommodations->count())
+                                                                @if($accommodations->count() > 0)
                                                                 @if ($accommod)
                                                                     <div class="row accommodation-data-list">
                                                                         <div>

@@ -318,7 +318,8 @@
                 _token: "{{ csrf_token() }}",
                 mode_of_travel: modeOfTravel,
                 starting_point: startingPoint,
-                destination: _this.val()
+                destination: _this.val(),
+                trip_planner: "trip_planner"
             }, function(response) {
                 if (response.status) {
                     let _html = '<option value="" disabled selected>Number of Days</option>';

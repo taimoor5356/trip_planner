@@ -49,10 +49,15 @@ class FilterController extends Controller
     {
         $itineraryRegionDays = Itinerary::where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->where('destination_id', $request->destination)->pluck('trip_duration')->toArray();
 
-        $regionSeasonDays = OriginDestination::with('destinationRegion')->where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->where('destination_id', $request->destination)->whereNotIn('days_nights', $itineraryRegionDays)->get();
+        $regionSeasonDays = OriginDestination::with('destinationRegion')->where('origin_id', $request->starting_point)->where('mode_of_travel', $request->mode_of_travel)->where('destination_id', $request->destination);
+
+        if (empty($request->trip_planner) && $request->trip_planner != 'trip_planner') {
+            $regionSeasonDays = $regionSeasonDays->whereNotIn('days_nights', $itineraryRegionDays);
+        }
+
         return response()->json([
             'status' => true,
-            'regionSeasonDays' => $regionSeasonDays
+            'regionSeasonDays' => $regionSeasonDays->get()
         ]);
     }
 

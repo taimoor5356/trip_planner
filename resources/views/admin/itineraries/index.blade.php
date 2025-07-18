@@ -150,6 +150,7 @@
                         name: 'trip_duration',
                         data: 'trip_duration'
                     },
+                    
                     {
                         name: 'created_at',
                         data: 'created_at'
