@@ -65,10 +65,10 @@ Route::get('/trip-design-result', [TripController::class, 'designMyTrip'])->name
 
 Route::get('/update-trip-design-result/{accommodation_id}/{town_id}', function($accommodationId, $townId) {
     Accommodation::where('town_id', $townId)->update([
-        'default_status' => 'no'
+        'default_status' => 0
     ]);
     Accommodation::where('id', $accommodationId)->update([
-        'default_status' => 'yes'
+        'default_status' => 1
     ]);
     return redirect()->back();
 })->name('update_design_my_trip');
