@@ -52,7 +52,7 @@
         </select>
     </div>
 </div>
-<!-- <div class="mb-3">
+<div class="mb-3">
     <label class="form-label" for="room_category_id">Room Categories</label>
     <div class="input-group input-group-merge">
         <select name="room_category_id[]" id="room_category_id" class="form-control select2" multiple>
@@ -64,7 +64,7 @@
             @endforeach
         </select>
     </div>
-</div> -->
+</div>
 
 <div class="col-12 room-categories-container d-none">
     <div class="mb-3">
