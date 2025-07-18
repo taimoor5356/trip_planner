@@ -566,6 +566,7 @@
                     <div class="col-md-4 text-center mb-4">
                         <small>Trip ID: {{$fetchItinerary->trip_id}}</small>
                     </div>
+                    <input type="hidden" name="total_final_amount" class="total-final-amount" value="0">
                 </div>
             </div>
         </div>
@@ -845,6 +846,7 @@
             // Do something with total
             $('.changeable-total-trip-planner-cost').val(Number(Number(totalOfAll)));
             $('.total-trip-price').html('PKR ' + Number(Number(totalOfAll)));
+            $('.total-final-amount').val(Number(totalOfAll));
         }
 
         window.isGuest = {{ Auth::check() ? 'false' : 'true' }};
@@ -870,7 +872,8 @@
                                 _token: "{{csrf_token()}}",
                                 user_id: "@if(!is_null(Auth::user())){{Auth::user()->id}}@endif",
                                 itinerary_id: $('#book_itinerary_id').val(),
-                                link: $('#link').val()
+                                link: $('#link').val(),
+                                total_amount: $('.total-final-amount').val()
                             },
                             success: function(response) {
                                 if (response.status) {

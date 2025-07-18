@@ -676,7 +676,8 @@ Route::group(['prefix' => ''], function () {
             Trip::create([
                 'itinerary_id' => $request->itinerary_id,
                 'user_id' => $request->user_id,
-                'link' => $request->link
+                'link' => $request->link,
+                'total_amount' => $request->total_amount
             ]);
             return response()->json([
                 'status' => true,

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('itinerary_id');
             $table->integer('user_id');
             $table->tinyInteger('status')->default(1);
+            $table->double('total_amount', 8,2)->default(0.00);
             $table->timestamps();
         });
     }
