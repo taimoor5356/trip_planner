@@ -82,7 +82,7 @@
         <div class="input-group input-group-merge">
             <select name="destination" id="destination" class="form-control">
                 <option value="" disabled selected>Trip Destination</option>
-                @if (!empty($cities))
+                @if (!empty($cities) && isset($record))
                 @foreach($cities as $city)
                     <option value="{{ $city->id }}" {{ $city->id == $record->destination_id ? 'selected' : '' }}>{{ $city->name }}</option>
                 @endforeach
@@ -96,14 +96,14 @@
         <input type="file" accept="image/*" class="form-control" id="image"
             name="image" onchange="display_image(this)">
     
-        <div class="col-lg-8 form-group preview-image-wrapper {{ count($record->images) > 0 ? 'd-block' : 'd-none' }}">
+        <div class="col-lg-8 form-group preview-image-wrapper {{ (isset($record) && count($record->images) > 0) ? 'd-block' : 'd-none' }}">
             <label for="image_preview" class="form-label">Image Preview</label>
             <img id="image_preview"
-                src="{{ count($record->images)>0 ? asset('imgs/itineraries/' . $record->images->first()->image) : '#' }}"
+                src="{{ (isset($record) && count($record->images))>0 ? asset('imgs/itineraries/' . $record->images->first()->image) : '#' }}"
                 alt="Image Preview"
-                class="img-thumbnail box-image-preview {{ $record->images ? 'd-block' : 'd-none' }}" />
+                class="img-thumbnail box-image-preview {{ (isset($record) && count($record->images) > 0) ? 'd-block' : 'd-none' }}" />
         </div>
-        <small>{{ $record->images->first()->image }}</small>
+        <small>{{ (isset($record) && count($record->images) > 0) ? $record->images->first()->image : '' }}</small>
     </div>
 
     <!-- Trip Duration -->
@@ -112,9 +112,11 @@
         <div class="input-group input-group-merge">
             <select name="trip_duration" id="trip_duration" class="form-control">
                 <option value="" disabled selected>Number of Days</option>
+                @if (isset($record))
                 @foreach(\App\Models\OriginDestination::where('origin_id', $record->origin_id)->where('mode_of_travel', $record->mode_of_travel)->where('destination_id', $record->destination_id)->get() as $dur)
                     <option value="{{ $dur->days_nights }}" {{ $record->days_nights == $dur->days_nights }}>{{ (ucfirst(str_replace('_', ' ', $dur->days_nights))) }}</option>
                 @endforeach
+                @endif
             </select>
         </div>
     </div>
@@ -133,10 +135,10 @@
 </div>
 
 <!-- Dynamic Day Plan -->
-<div id="day-wise-plan-section" class="@if(count($record->itineraryDays) > 0) @else d-none @endif mt-4">
+<div id="day-wise-plan-section" class="@if(isset($record) && count($record->itineraryDays) > 0) @else d-none @endif mt-4">
     <label class="form-label fw-bold">Day-wise Plan</label>
     <div id="day-wise-fields">
-        @if (count($record->itineraryDays) > 0)
+        @if (isset($record) && count($record->itineraryDays) > 0)
         @for ($i = 0; $i < count($record->itineraryDays); $i++)
             @php 
                 $itineraryDayWiseData = $record->itineraryDays[$i];
@@ -161,7 +163,7 @@
                     <div class="mb-2">
                         <label>Landmarks</label>
                         <select name="days[{{$i}}][landmarks][]" id="landmarks-day-{{$i}}" class="form-control landmark-select select2" multiple>
-                            @foreach(\App\Models\LandMark::where('city_id', $itineraryDayWiseData->destination_id)->get() as $landmrk)
+                            @foreach(\App\Models\LandMark::get() as $landmrk)
                             <option value="{{ $landmrk->id }}" {{ in_array($landmrk->id, json_decode($itineraryDayWiseData->landmarks)) ? 'selected' : '' }}>{{ $landmrk->name }}</option>
                             @endforeach
                         </select>
@@ -293,7 +295,11 @@
                                 </div>
                                 <div class="mb-2">
                                     <label>Landmarks</label>
-                                    <select name="days[${i}][landmarks][]" id="landmarks-day-${i}" class="form-control landmark-select select2" multiple></select>
+                                    <select name="days[${i}][landmarks][]" id="landmarks-day-${i}" class="form-control landmark-select select2" multiple>
+                                        @foreach(\App\Models\LandMark::get() as $landmrk)
+                                        <option value="{{ $landmrk->id }}">{{ $landmrk->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -310,43 +316,43 @@
             }
         });
 
-        $(document).on('change', '.city-select', function () {
-            const cityId = $(this).val();
-            const day = $(this).data('day'); // from data-day attribute
-            const $landmarkSelect = $(`#landmarks-day-${day}`);
+        // $(document).on('change', '.city-select', function () {
+        //     const cityId = $(this).val();
+        //     const day = $(this).data('day'); // from data-day attribute
+        //     const $landmarkSelect = $(`#landmarks-day-${day}`);
 
-            // Clear previous options
-            $landmarkSelect.html('');
+        //     // Clear previous options
+        //     // $landmarkSelect.html('');
 
-            if (!cityId) return;
+        //     if (!cityId) return;
 
-            // Example using AJAX to get landmarks by city ID
-            $.ajax({
-                url: "{{ route('fetch_city_landmarks') }}",
-                // url: "{{ route('fetch_landmarks') }}",
-                method: "POST",
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    city_id: cityId
-                },
-                success: function(response) {
-                    if (response.status == true) {
-                        let options = '';
-                        response.landMarks.forEach(l => {
-                            options += `<option value="${l.id}">${l.name}</option>`;
-                        });
+        //     // Example using AJAX to get landmarks by city ID
+        //     $.ajax({
+        //         url: "{{ route('fetch_city_landmarks') }}",
+        //         // url: "{{ route('fetch_landmarks') }}",
+        //         method: "POST",
+        //         data: {
+        //             _token: '{{ csrf_token() }}',
+        //             city_id: cityId
+        //         },
+        //         success: function(response) {
+        //             if (response.status == true) {
+        //                 let options = '';
+        //                 response.landMarks.forEach(l => {
+        //                     options += `<option value="${l.id}">${l.name}</option>`;
+        //                 });
 
-                        $landmarkSelect.html(options);
+        //                 // $landmarkSelect.html(options);
 
-                        // Re-initialize select2
-                        $landmarkSelect.select2({
-                            placeholder: 'Select Landmarks',
-                            allowClear: true
-                        });
-                    }
-                }
-            });
-        });
+        //                 // Re-initialize select2
+        //                 $landmarkSelect.select2({
+        //                     placeholder: 'Select Landmarks',
+        //                     allowClear: true
+        //                 });
+        //             }
+        //         }
+        //     });
+        // });
         
     });
 </script>
