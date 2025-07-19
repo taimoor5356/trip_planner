@@ -23,4 +23,8 @@ class Itinerary extends Model
     public function images() {
         return $this->hasMany(ItineraryImage::class, 'itinerary_id', 'id');
     }
+
+    public function itineraryDays() {
+        return $this->hasMany(ItineraryDayWisePlan::class, 'itinerary_id', 'id');
+    }
 }

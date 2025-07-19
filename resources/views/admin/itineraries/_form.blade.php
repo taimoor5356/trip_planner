@@ -70,7 +70,7 @@
             <select name="starting_point" id="starting_point" class="form-control">
                 <option value="" disabled selected>Starting Point</option>
                 @foreach(\App\Models\Origin::where('status',  1)->get() as $origin)
-                    <option value="{{ strtolower($origin->id) }}" {{ (isset($record) && ($record->starting_point == $origin->id)) == strtolower($origin->id) ? 'selected' : '' }}>{{ $origin->name }}</option>
+                    <option value="{{ strtolower($origin->id) }}" {{ (isset($record) && ($record->origin_id == $origin->id)) == strtolower($origin->id) ? 'selected' : '' }}>{{ $origin->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -82,15 +82,28 @@
         <div class="input-group input-group-merge">
             <select name="destination" id="destination" class="form-control">
                 <option value="" disabled selected>Trip Destination</option>
+                @if (!empty($cities))
+                @foreach($cities as $city)
+                    <option value="{{ $city->id }}" {{ $city->id == $record->destination_id ? 'selected' : '' }}>{{ $city->name }}</option>
+                @endforeach
+                @endif
             </select>
         </div>
     </div>
 
-    <div class="col-md-6 mb-3">
-        <label class="form-label" for="images">Images</label>
-        <div class="input-group input-group-merge">
-            <input type="file" name="images[]" id="images" class="form-control" multiple>
+    <div class="col-lg-6 form-group mb-2">
+        <label for="image" class="form-label">Upload Image</label>
+        <input type="file" accept="image/*" class="form-control" id="image"
+            name="image" onchange="display_image(this)">
+    
+        <div class="col-lg-8 form-group preview-image-wrapper {{ count($record->images) > 0 ? 'd-block' : 'd-none' }}">
+            <label for="image_preview" class="form-label">Image Preview</label>
+            <img id="image_preview"
+                src="{{ count($record->images)>0 ? asset('imgs/itineraries/' . $record->images->first()->image) : '#' }}"
+                alt="Image Preview"
+                class="img-thumbnail box-image-preview {{ $record->images ? 'd-block' : 'd-none' }}" />
         </div>
+        <small>{{ $record->images->first()->image }}</small>
     </div>
 
     <!-- Trip Duration -->
@@ -99,6 +112,9 @@
         <div class="input-group input-group-merge">
             <select name="trip_duration" id="trip_duration" class="form-control">
                 <option value="" disabled selected>Number of Days</option>
+                @foreach(\App\Models\OriginDestination::where('origin_id', $record->origin_id)->where('mode_of_travel', $record->mode_of_travel)->where('destination_id', $record->destination_id)->get() as $dur)
+                    <option value="{{ $dur->days_nights }}" {{ $record->days_nights == $dur->days_nights }}>{{ (ucfirst(str_replace('_', ' ', $dur->days_nights))) }}</option>
+                @endforeach
             </select>
         </div>
     </div>
@@ -117,13 +133,74 @@
 </div>
 
 <!-- Dynamic Day Plan -->
-<div id="day-wise-plan-section" class="d-none mt-4">
+<div id="day-wise-plan-section" class="@if(count($record->itineraryDays) > 0) @else d-none @endif mt-4">
     <label class="form-label fw-bold">Day-wise Plan</label>
-    <div id="day-wise-fields"></div>
+    <div id="day-wise-fields">
+        @if (count($record->itineraryDays) > 0)
+        @for ($i = 0; $i < count($record->itineraryDays); $i++)
+            @php 
+                $itineraryDayWiseData = $record->itineraryDays[$i];
+            @endphp
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="mb-3">Day {{$i+1}}</h5>
+                    <div class="mb-2">
+                        <label>Origin</label>
+                        <input type="text" name="origins[{{$i}}][origin]" class="form-control" value="{{ $itineraryDayWiseData->origin }}" placeholder="Enter origin">
+                    </div>
+                    <div class="mb-2">
+                        <label>Destination</label>
+                        <select name="city_ids[{{$i}}][city_id]" class="form-control city-select" data-day="{{$i}}">
+                            <option value="">Select Destination</option>
+                            @foreach(\App\Models\City::where('status', 1)->get() as $city)
+                                <option value="{{ $city->id }}" {{ $itineraryDayWiseData->destination_id == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Landmarks</label>
+                        <select name="days[{{$i}}][landmarks][]" id="landmarks-day-{{$i}}" class="form-control landmark-select select2" multiple>
+                            @foreach(\App\Models\LandMark::where('city_id', $itineraryDayWiseData->destination_id)->get() as $landmrk)
+                            <option value="{{ $landmrk->id }}" {{ in_array($landmrk->id, json_decode($itineraryDayWiseData->landmarks)) ? 'selected' : '' }}>{{ $landmrk->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+        @endfor
+        @endif
+    </div>
 </div>
 @section('_scripts')
 <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
 <script>
+    
+    function display_image(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(input)
+                    .closest(".row")
+                    .find(".preview-image-wrapper")
+                    .addClass("d-block")
+                    .removeClass("d-none");
+                $(input)
+                    .closest(".row")
+                    .find("#image_preview")
+                    .attr("src", e.target.result)
+                    .addClass("d-block")
+                    .removeClass("d-none");
+                $(input)
+                    .closest(".row")
+                    .find("#remove_image")
+                    .addClass("d-block")
+                    .removeClass("d-none");
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
     $(document).ready(function () {
         $('.select2').select2({
             placeholder: 'Select',
@@ -232,6 +309,7 @@
                 $('#day-wise-plan-section').addClass('d-none');
             }
         });
+
         $(document).on('change', '.city-select', function () {
             const cityId = $(this).val();
             const day = $(this).data('day'); // from data-day attribute

@@ -8,14 +8,10 @@ use App\Models\City;
 use DataTables;
 use App\Models\Region;
 use App\Models\Itinerary;
-use App\Models\ItineraryActivity;
 use App\Models\ItineraryDayWisePlan;
 use App\Models\Origin;
 use App\Models\Season;
-use App\Models\Trip;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ItineraryController extends Controller
@@ -187,6 +183,7 @@ class ItineraryController extends Controller
         $data['regions'] = Region::where('status', 1)->get();
         $data['seasonsAvailability'] = Season::where('status', 1)->get();
         $data['activityTypes'] = ActivityType::where('status', 1)->get();
+        $data['cities'] = City::where('status', 1)->get();
         return view('admin.itineraries.edit', $data);
     }
 
