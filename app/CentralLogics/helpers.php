@@ -9,7 +9,6 @@ class Helpers {
     public static function storeImage($request, $model, $instance, $parameter, $module, $field = 'images', $extraFields = [])
     {
         if ($request->hasFile($field)) {
-
             // Delete old images
             $existingImages = $model::where($parameter, $instance->id)->get();
             foreach ($existingImages as $exImage) {
@@ -20,7 +19,6 @@ class Helpers {
 
             // Delete DB records
             $model::where($parameter, $instance->id)->delete();
-
             // Save new images
             foreach ($request->file($field) as $file) {
                 $imagePath = self::mmadev_store_and_get_image_path($module, $file);
@@ -31,7 +29,9 @@ class Helpers {
                 ], $extraFields);
 
                 $model::create($data);
+
             }
+
         }
     }
     

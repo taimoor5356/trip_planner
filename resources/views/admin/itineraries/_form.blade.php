@@ -82,9 +82,9 @@
         <div class="input-group input-group-merge">
             <select name="destination" id="destination" class="form-control">
                 <option value="" disabled selected>Trip Destination</option>
-                @if (!empty($cities) && isset($record))
-                @foreach($cities as $city)
-                    <option value="{{ $city->id }}" {{ $city->id == $record->destination_id ? 'selected' : '' }}>{{ $city->name }}</option>
+                @if (!empty($regions) && isset($record))
+                @foreach($regions as $region)
+                    <option value="{{ $region->id }}" {{ $region->id == $record->destination_id ? 'selected' : '' }}>{{ $region->name }}</option>
                 @endforeach
                 @endif
             </select>
@@ -93,19 +93,19 @@
 
     <div class="col-lg-6 form-group mb-2">
         <label for="image" class="form-label">Upload Image</label>
-        <input type="file" accept="image/*" class="form-control" id="image"
-            name="image" onchange="display_image(this)">
+        <input type="file" accept="image/*" class="form-control" id="images"
+            name="images[]" onchange="display_image(this)">
     
         <div class="col-lg-8 form-group preview-image-wrapper {{ (isset($record) && count($record->images) > 0) ? 'd-block' : 'd-none' }}">
             <label for="image_preview" class="form-label">Image Preview</label>
             <img id="image_preview"
-                src="{{ (isset($record) && count($record->images))>0 ? asset('imgs/itineraries/' . $record->images->first()->image) : '#' }}"
+                src="{{ (isset($record) && count($record->images)>0) ? asset('imgs/itineraries/' . $record->images->first()->image) : '#' }}"
                 alt="Image Preview"
                 class="img-thumbnail box-image-preview {{ (isset($record) && count($record->images) > 0) ? 'd-block' : 'd-none' }}" />
         </div>
         <small>{{ (isset($record) && count($record->images) > 0) ? $record->images->first()->image : '' }}</small>
     </div>
-
+    
     <!-- Trip Duration -->
     <div class="col-md-6 mb-3">
         <label class="form-label text-dark" for="trip_duration">Trip duration *</label>
@@ -114,7 +114,7 @@
                 <option value="" disabled selected>Number of Days</option>
                 @if (isset($record))
                 @foreach(\App\Models\OriginDestination::where('origin_id', $record->origin_id)->where('mode_of_travel', $record->mode_of_travel)->where('destination_id', $record->destination_id)->get() as $dur)
-                    <option value="{{ $dur->days_nights }}" {{ $record->days_nights == $dur->days_nights }}>{{ (ucfirst(str_replace('_', ' ', $dur->days_nights))) }}</option>
+                    <option value="{{ $dur->days_nights }}" {{ $record->trip_duration == $dur->days_nights ? 'selected' : '' }}>{{ (ucfirst(str_replace('_', ' ', $dur->days_nights))) }}</option>
                 @endforeach
                 @endif
             </select>
@@ -126,9 +126,9 @@
         <label class="form-label" for="status">Status</label>
         <div class="input-group input-group-merge">
             <select name="status" id="status" class="form-control">
-                <option value="" disabled selected>Select Status</option>
-                <option value="0" {{ isset($record) ? ($record->status == 0 ? 'selected' : '') : '' }}>In Active</option>
-                <option value="1" {{ isset($record) ? ($record->status == 1 ? 'selected' : '') : '' }}>Active</option>
+                <option value="" disabled>Select Status</option>
+                <option value="0">In Active</option>
+                <option value="1" selected>Active</option>
             </select>
         </div>
     </div>

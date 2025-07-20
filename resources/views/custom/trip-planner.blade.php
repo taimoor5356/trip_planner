@@ -112,7 +112,7 @@
 
     <div class="container flex-grow-1 container-p-y d-flex justify-content-center mt-4">
         @php
-        $fetchItinerary = \App\Models\Itinerary::where('mode_of_travel', $queryParams['mode_of_travel'])->where('origin_id', $queryParams['starting_point'])->first();
+        $fetchItinerary = \App\Models\Itinerary::with('images')->where('mode_of_travel', $queryParams['mode_of_travel'])->where('origin_id', $queryParams['starting_point'])->where('destination_id', Request::get('destination'))->first();
         $itineraryDailyPlans = [];
         if (isset($fetchItinerary)) {
             $itineraryDailyPlans = \App\Models\ItineraryDayWisePlan::with('destination.image')->where('itinerary_id', $fetchItinerary->id)->get();
@@ -124,7 +124,10 @@
             <div class="card-header p-0" style="margin-bottom: 30px; overflow: hidden; border-radius: 5px 5px 0 0;">
                 <div class="position-relative">
                     <!-- Full-width image -->
-                    <img src="{{ asset('imgs/regions/' . ($destination->image?->image ?? 'default.jpg')) }}"
+                    @php 
+                        $itineraryImage = $fetchItinerary->images->first();
+                    @endphp
+                    <img src="{{ asset('imgs/itineraries/'.(isset($itineraryImage) ? $itineraryImage->image : '').'') }}"
                         alt=""
                         class="img-fluid w-100"
                         style="height: 200px; object-fit: cover;">
@@ -291,13 +294,26 @@
                                                                     $landMark = \App\Models\LandMark::with('activities.activity', 'image')->where('id', $landMarkId)->first();
                                                                 @endphp
                                                                 <div class="col-md-4 mb-3">
-                                                                    <div class="card h-100" data-bs-toggle="modal" data-bs-target="#land-mark-activities-modal{{ $itinerary->id }}{{ $landMark->id }}" style="cursor:pointer">
+                                                                    <div class="card h-100" 
+                                                                        data-bs-toggle="modal" 
+                                                                        data-bs-target="#land-mark-activities-modal{{ $itinerary->id }}{{ $landMark->id }}" 
+                                                                        style="cursor:pointer; height: 200px;"> {{-- Adjust card height as needed --}}
+                                                                        
                                                                         <img src="{{ asset('imgs/land_marks/' . $landMark->image?->image) }}"
                                                                             class="img-fluid"
                                                                             alt=""
                                                                             style="height: 100px; width: 100%; object-fit: cover; border-radius: 5px 5px 0px 0px;">
-                                                                        <small class="card-footer p-1 text-center text-dark">
+                                                                            
+                                                                        <small class="card-footer p-1 text-start fw-bold text-dark" 
+                                                                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">
                                                                             {{ $landMark->name ?? '' }}
+                                                                            @php
+                                                                                $activityNames = $landMark->activities->pluck('activity.name')->filter()->implode(', ');
+                                                                            @endphp
+                                                                            <br>
+                                                                            <small class="text-start fw-light">Activities:</small>
+                                                                            <br>
+                                                                            <small class="text-start fw-light">{{ \Illuminate\Support\Str::limit($activityNames, 60, '...') }}</small>
                                                                         </small>
                                                                     </div>
                                                                 </div>
@@ -330,14 +346,28 @@
                                                         <h6 class="text-dark fw-bold"><i class="bx bx-music mb-1"></i> Activities:</h6>
                                                         <ul style="padding-left: 15px;">
                                                             @isset($landMark)
-                                                            @if (!empty($landMark->activity_ids))
-                                                                @foreach(json_decode($landMark->activity_ids) as $landMarkActivity)
-                                                                @php 
-                                                                    $activity = \App\Models\ActivityType::where('id', $landMarkActivity)->first();
+                                                                @php
+                                                                    $activityIds = $landMark->activity_ids;
+
+                                                                    // Convert to array if it's valid JSON and not empty/null
+                                                                    $decodedIds = [];
+
+                                                                    if (!empty($activityIds) && $activityIds !== 'null') {
+                                                                        $decoded = json_decode($activityIds, true);
+                                                                        if (is_array($decoded)) {
+                                                                            $decodedIds = $decoded;
+                                                                        }
+                                                                    }
                                                                 @endphp
-                                                                    <li>{{ isset($activity) ? $activity->name : '' }}</li>
-                                                                @endforeach
-                                                            @endif
+
+                                                                @if (!empty($decodedIds))
+                                                                    @foreach ($decodedIds as $landMarkActivity)
+                                                                        @php 
+                                                                            $activity = \App\Models\ActivityType::find($landMarkActivity);
+                                                                        @endphp
+                                                                        <li>{{ $activity?->name }}</li>
+                                                                    @endforeach
+                                                                @endif
                                                             @endisset
                                                         </ul>
                                                     </div>
@@ -378,14 +408,14 @@
                                                                                 </small>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="col-lg-5">
+                                                                        <div class="col-lg-7">
                                                                             <div id="accommodationCarousel{{$key1}}" class="carousel slide" data-bs-ride="carousel">
                                                                                 <div class="carousel-inner">
                                                                                     @foreach($accommod->images as $index => $accommodation)
                                                                                         <div class="carousel-item {{ $index === 0 ? 'active' : '' }}" style="border-radius: 5px;">
                                                                                             <div class="col-md-12 mb-3" style="border-radius: 5px;">
                                                                                                 <div class="card h-100">
-                                                                                                    <img src="{{ asset('imgs/accommodations/'.$accommodation->image) }}" class="img-fluid" alt="" style="border-radius: 5px; height: 150px; width: 100%; object-fit: cover">
+                                                                                                    <img src="{{ asset('imgs/accommodations/'.$accommodation->image) }}" class="img-fluid" alt="" style="border-radius: 5px; height: 250px; width: 100%; object-fit: cover">
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
@@ -393,13 +423,13 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="col-lg-7 single-accommodation-data text-dark">
+                                                                        <div class="col-lg-5 single-accommodation-data text-dark">
                                                                             <small>
                                                                                 <span class="fw-bold text-decoration-underline">Room Categories:</span> <br>
                                                                                 @if ($accommod->roomCategories && count($accommod->roomCategories) > 0)
                                                                                     <div class="row">
                                                                                     @foreach($accommod->roomCategories as $key3 => $roomCategory)
-                                                                                        <div class="col-6 d-flex align-items-center">
+                                                                                        <div class="col-12 d-flex align-items-center">
                                                                                             <div>
                                                                                                 <input type="radio" checked
                                                                                                 name="room-category-radio-{{ $key1 }}"
@@ -419,7 +449,7 @@
                                                                             <br>
                                                                             <button class="btn btn-primary btn-sm" data-bs-target="#change-hotel-modal{{$key1}}" data-bs-toggle="modal">Change Hotel</button>
                                                                         </div>
-                                                                        <div class="modal fade modal-center" id="change-hotel-modal{{$key1}}" tabindex="-1" role="dialog" aria-labelledby="change-hotel-modal{{$key1}}" aria-hidden="true">
+                                                                        <div class="modal fade modal-center all-accommodations-modal" id="change-hotel-modal{{$key1}}" tabindex="-1" role="dialog" aria-labelledby="change-hotel-modal{{$key1}}" aria-hidden="true">
                                                                             <div class="modal-dialog modal-lg" role="document">
                                                                                 <div class="modal-content modal-center">
                                                                                     <div class="modal-header">
@@ -427,31 +457,59 @@
                                                                                     </div>
                                                                                     <div class="modal-body">
                                                                                         <div class="row">
-                                                                                            @foreach($accommodations as $accommo)
+                                                                                            @foreach($accommodations as $accomoKey => $accommo)
                                                                                                 <div class="col-md-3 mb-3">
-                                                                                                    <a href="{{ route('update_design_my_trip', [$accommo->id, $itinerary->destination_id]) }}" class="text-dark">
-                                                                                                        <div class="card h-100" style="cursor:pointer">
-                                                                                                            <div id="accommodationCarousel{{$key1}}" class="carousel slide" data-bs-ride="carousel">
-                                                                                                                <div class="carousel-inner">
-                                                                                                                    @foreach($accommo->images as $index => $singleAccommodation)
-                                                                                                                        <div class="carousel-item {{ $index === 0 ? 'active' : '' }}" style="border-radius: 5px;">
-                                                                                                                            <div class="col-md-12 mb-3" style="border-radius: 5px;">
-                                                                                                                                <div class="card h-100">
-                                                                                                                                    <img src="{{ asset('imgs/accommodations/'.$singleAccommodation->image) }}" class="img-fluid" alt="" style="border-radius: 5px 5px 0px 0px; height: 100px; width: 100%; object-fit: cover">
-                                                                                                                                </div>
+                                                                                                    <div class="card h-100">
+                                                                                                        <div id="accommodationCarousel{{$key1}}" class="carousel-class">
+                                                                                                            <div class="carousel-inner">
+                                                                                                                @foreach($accommo->images as $index => $singleAccommodation)
+                                                                                                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}" style="border-radius: 5px;">
+                                                                                                                        <div class="col-md-12 mb-3" style="border-radius: 5px;">
+                                                                                                                            <div class="card h-100">
+                                                                                                                                <img src="{{ asset('imgs/accommodations/'.$singleAccommodation->image) }}" class="img-fluid" alt="" style="border-radius: 5px 5px 0px 0px; height: 100px; width: 100%; object-fit: cover">
                                                                                                                             </div>
                                                                                                                         </div>
-                                                                                                                    @endforeach
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                            <div class="card-footer py-0 px-1">
-                                                                                                                <small class="text-center text-dark">
-                                                                                                                    {{ $accommo->name }}
-                                                                                                                </small>
+                                                                                                                    </div>
+                                                                                                                @endforeach
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                    </a>
+                                                                                                        <div class="card-footer py-0 px-1">
+                                                                                                            <small class="text-center text-dark">
+                                                                                                                {{ $accommo->name }}
+                                                                                                            </small>
+                                                                                                            <hr>
+                                                                                                            <a href="{{ route('update_design_my_trip', [$accommo->id, $itinerary->destination_id]) }}" class="mb-1 btn btn-primary btn-sm">Select</a>
+                                                                                                            <a href="#" class="show-accommodation-details mb-1 btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#view-accommodation-details-{{$key1}}{{$accomoKey}}">View</a>
+                                                                                                        </div>
+                                                                                                    </div>
                                                                                                 </div>
+
+                                                                                                
+                                                                        <div class="modal fade modal-center accommodation-details-modal" id="view-accommodation-details-{{$key1}}{{$accomoKey}}" tabindex="-1" role="dialog" aria-labelledby="view-accommodation-details-{{$key1}}{{$accomoKey}}" aria-hidden="true">
+                                                                            <div class="modal-dialog modal-lg" role="document">
+                                                                                <div class="modal-content modal-center">
+                                                                                    <div class="modal-header">
+                                                                                        Accommodation Details
+                                                                                    </div>
+                                                                                    <div class="modal-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-3 mb-3">
+                                                                                                <div class="card h-100">
+                                                                                                    
+                                                                                                    <div class="card-footer py-0 px-1">
+                                                                                                        <small class="text-center text-dark">
+                                                                                                            
+                                                                                                        </small>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+
                                                                                             @endforeach
                                                                                         </div>
                                                                                     </div>
@@ -988,6 +1046,15 @@
                     }
                 }
             });
+        });
+
+        $(document).on('click', '.show-accommodation-details', function() {
+            $('.all-accommodations-modal').modal('hide');
+            setTimeout(() => {
+                $('.all-accommodations-modal').on('hidden.bs.modal', function () {
+                    $('.accommodation-details-modal').modal('show');
+                });
+            }, 1000);
         });
     });
 </script>
