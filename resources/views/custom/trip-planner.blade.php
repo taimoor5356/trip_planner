@@ -275,7 +275,7 @@
                                                     data-bs-toggle="collapse" data-bs-target="#daily-plan-flush-collapse-{{$key1}}"
                                                     aria-expanded="false" aria-controls="daily-plan-flush-collapse-{{$key1}}">
                                                         <h6 class="fw-bold text-dark">
-                                                            Day {{$key1+1}}: Exploring {{$itinerary->destination?->name}} <small class="text-secondary fw-normal"> @if($key1 == 0) {{\Carbon\Carbon::parse(Request::get('trip_start_date'))->format('D, M d')}} @else {{\Carbon\Carbon::parse(Request::get('trip_start_date'))->addDays($key1)->format('D, M d')}} @endif</small>
+                                                            Day {{$key1+1}}: Exploring {{$itinerary->origin}} <small class="text-secondary fw-normal"> @if($key1 == 0) {{\Carbon\Carbon::parse(Request::get('trip_start_date'))->format('D, M d')}} @else {{\Carbon\Carbon::parse(Request::get('trip_start_date'))->addDays($key1)->format('D, M d')}} @endif</small>
                                                         </h6>
                                                 </button>
                                             </h2>
