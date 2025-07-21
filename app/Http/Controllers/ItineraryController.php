@@ -137,6 +137,7 @@ class ItineraryController extends Controller
     }
 
     public function storeItinerary($itinerary, $request) {
+        // dd($request->all());
         try {
             $itinerary->head_line = $request->head_line;
             $itinerary->tag_line = $request->tag_line ?? null;
@@ -149,14 +150,17 @@ class ItineraryController extends Controller
             $itinerary->trip_id = 'Trip-' . time();
             $itinerary->save();
             Helpers::storeImage($request, \App\Models\ItineraryImage::class, $itinerary, 'itinerary_id', 'itineraries');
-            ItineraryDayWisePlan::where('itinerary_id', $itinerary->id)->delete();
-            foreach ($request->days as $key => $data) {
+            ItineraryDayWisePlan::where('itinerary_id', $itinerary->id)->forceDelete();
+
+            foreach ($request->origins as $key => $data) {
                 ItineraryDayWisePlan::create([
                     'itinerary_id' => $itinerary->id,
                     // 'day' => $request->days[$key],
                     'origin' => $request->origins[$key]['origin'],
                     'destination_id' => $request->city_ids[$key]['city_id'],
-                    'landmarks' => json_encode($request->days[$key]['landmarks'])
+                    'landmarks' => isset($request->days[$key]['landmarks']) && !empty($request->days[$key]['landmarks']) 
+                                    ? json_encode($request->days[$key]['landmarks']) 
+                                    : json_encode([]),
                 ]);
             }
         } catch (\Exception $e) {
