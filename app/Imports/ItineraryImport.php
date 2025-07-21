@@ -74,7 +74,15 @@ class ItineraryImport implements ToCollection
                     // $landmarkNames = isset($itineraryDayPlanLandmarkGroups[$key])
                     //     ? explode(',', $itineraryDayPlanLandmarkGroups[$key])
                     //     : [];
-
+                    foreach ($landmarkNames as $name) {
+                        $checkExists = LandMark::where('name', $name)->first();
+                        if (!isset($checkExists)) {
+                            $createNewLandMark = new LandMark();
+                            $createNewLandMark->name = $name;
+                            $createNewLandMark->city_id = $itineraryDestinationNameId;
+                            $createNewLandMark->save();
+                        }
+                    }
                     // Step 2: Query all landmarks using those names
                     $landMarkIds = LandMark::whereIn('name', $landmarkNames)->pluck('id')->toArray();
                     // Step 3: Store IDs as JSON
