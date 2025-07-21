@@ -56,7 +56,7 @@ class FilterController extends Controller
         // dd($regionSeasonDays->get());
 
         if (empty($request->trip_planner) && $request->trip_planner != 'trip_planner') {
-            $regionSeasonDays = $regionSeasonDays->whereNotIn('days_nights', $itineraryRegionDays);
+            // $regionSeasonDays = $regionSeasonDays->whereNotIn('days_nights', $itineraryRegionDays);
         } else {
             $regionSeasonDays = $regionSeasonDays->whereIn('days_nights', $itineraryRegionDays);
         }
