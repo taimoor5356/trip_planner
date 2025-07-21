@@ -109,11 +109,14 @@
     <!-- Trip Duration -->
     <div class="col-md-6 mb-3">
         <label class="form-label text-dark" for="trip_duration">Trip duration *</label>
+        <input type="hidden" value="{{ $record->trip_duration }}">
         <div class="input-group input-group-merge">
             <select name="trip_duration" id="trip_duration" class="form-control">
                 <option value="" disabled selected>Number of Days</option>
                 @if (isset($record))
                 @foreach(\App\Models\OriginDestination::where('origin_id', $record->origin_id)->where('mode_of_travel', $record->mode_of_travel)->where('destination_id', $record->destination_id)->get() as $dur)
+                
+                    <input type="hidden" value="{{ $dur->trip_duration }}">
                     <option value="{{ $dur->days_nights }}" {{ $record->trip_duration == $dur->days_nights ? 'selected' : '' }}>{{ (ucfirst(str_replace('_', ' ', $dur->days_nights))) }}</option>
                 @endforeach
                 @endif
