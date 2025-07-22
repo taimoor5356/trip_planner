@@ -112,7 +112,7 @@
 
     <div class="container flex-grow-1 container-p-y d-flex justify-content-center mt-4">
         @php
-        $fetchItinerary = \App\Models\Itinerary::with('images')->where('mode_of_travel', $queryParams['mode_of_travel'])->where('origin_id', $queryParams['starting_point'])->where('destination_id', Request::get('destination'))->first();
+        $fetchItinerary = \App\Models\Itinerary::with('images')->where('mode_of_travel', $queryParams['mode_of_travel'])->where('origin_id', $queryParams['starting_point'])->where('destination_id', Request::get('destination'))->where('trip_duration', $queryParams['trip_duration'])->first();
         $itineraryDailyPlans = [];
         if (isset($fetchItinerary)) {
             $itineraryDailyPlans = \App\Models\ItineraryDayWisePlan::with('destination.image')->where('itinerary_id', $fetchItinerary->id)->get();

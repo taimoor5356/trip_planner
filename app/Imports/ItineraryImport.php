@@ -68,7 +68,10 @@ class ItineraryImport implements ToCollection
                     $destination = City::where('name', $itineraryDayPlanDestination)->first();
 
                     $itineraryDestinationNameId = $destination->id ?? '';
-                    $landmarkNamesRaw = explode(',', $itineraryDayPlanLandmarkGroups[$key]);
+                    $landmarkNamesRaw = [];
+                    if (isset($itineraryDayPlanLandmarkGroups[$key])) {
+                        $landmarkNamesRaw = explode(',', $itineraryDayPlanLandmarkGroups[$key]);
+                    }
                     $landmarkNames = array_map('trim', $landmarkNamesRaw);
                     // Step 1: Get landmark names from Excel (comma-separated)
                     // $landmarkNames = isset($itineraryDayPlanLandmarkGroups[$key])
