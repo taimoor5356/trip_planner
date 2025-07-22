@@ -65,9 +65,12 @@ class ItineraryImport implements ToCollection
                 
                 ItineraryDayWisePlan::where('itinerary_id', $itinerary->id)->forceDelete();
                 foreach ($itineraryDayPlanOrigin as $key => $originName) {
-                    $destination = City::where('name', $itineraryDayPlanDestination)->first();
-
-                    $itineraryDestinationNameId = $destination->id ?? '';
+                    if (!empty($itineraryDayPlanDestination[$key])) {
+                        $cityDestination = City::where('name', trim($itineraryDayPlanDestination[$key]))->first();
+                        $itineraryCityDestinationNameId = $cityDestination->id ?? null;
+                    } else {
+                        $itineraryCityDestinationNameId = null;
+                    }
                     $landmarkNamesRaw = [];
                     if (isset($itineraryDayPlanLandmarkGroups[$key])) {
                         $landmarkNamesRaw = explode(',', $itineraryDayPlanLandmarkGroups[$key]);
@@ -82,7 +85,7 @@ class ItineraryImport implements ToCollection
                         if (!isset($checkExists)) {
                             $createNewLandMark = new LandMark();
                             $createNewLandMark->name = $name;
-                            $createNewLandMark->city_id = $itineraryDestinationNameId;
+                            $createNewLandMark->city_id = $itineraryCityDestinationNameId;
                             $createNewLandMark->save();
                         }
                     }
@@ -92,7 +95,7 @@ class ItineraryImport implements ToCollection
                     ItineraryDayWisePlan::create([
                         'itinerary_id' => $itinerary->id,
                         'origin' => $itineraryDayPlanOrigin[$key],
-                        'destination_id' => $itineraryDestinationNameId,
+                        'destination_id' => $itineraryCityDestinationNameId,
                         'landmarks' => json_encode($landMarkIds),
                     ]);
                 }
