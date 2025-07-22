@@ -431,7 +431,8 @@
                                                                                     @foreach($accommod->roomCategories as $key3 => $roomCategory)
                                                                                         <div class="col-12 d-flex align-items-center">
                                                                                             <div>
-                                                                                                <input type="radio" checked
+                                                                                                <input type="radio" 
+                                                                                                {{ $roomCategory->is_default == 1 ? 'checked' : '' }}
                                                                                                 name="room-category-radio-{{ $key1 }}"
                                                                                                 class="room-category-radio mt-1"
                                                                                                 data-room-category-price="{{ $roomCategory->price }}"
