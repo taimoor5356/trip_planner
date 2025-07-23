@@ -42,4 +42,8 @@ class Accommodation extends Model
     public function images() {
         return $this->hasMany(AccommodationImage::class, 'accommodation_id', 'id');
     }
+
+    public function city() {
+        return $this->belongsTo(City::class, 'city_id', 'id');
+    }
 }

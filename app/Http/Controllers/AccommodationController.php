@@ -26,7 +26,10 @@ class AccommodationController extends Controller
         if (!empty($request->search['value'])) {
             $searchValue = $request->search['value'];
             $records = $records->where(function ($query) use ($searchValue) {
-                $query->where('name', 'LIKE', "%$searchValue%");
+                $query->where('name', 'LIKE', "%$searchValue%")
+                    ->orWhereHas('city', function ($q) use ($searchValue) {
+                        $q->where('name', 'LIKE', "%$searchValue%");
+                    });
             });
         }
         $totalRecords = $records->count(); // Get the total number of records for pagination
@@ -59,30 +62,33 @@ class AccommodationController extends Controller
             ->addColumn('property_amenities_id', function ($row) {
                 return ucwords($row->amenity_names_list);
             })
-            ->addColumn('location', function ($row) {
-                return ucwords($row->location);
-            })
+            // ->addColumn('location', function ($row) {
+            //     return ucwords($row->location);
+            // })
             ->addColumn('town_id', function ($row) {
                 return ucwords($row->town?->name);
             })
-            ->addColumn('num_of_rooms', function ($row) {
-                return ucwords($row->num_of_rooms);
+            ->addColumn('city_id', function ($row) {
+                return ucwords($row->city?->name);
             })
-            ->addColumn('front_desk_contact', function ($row) {
-                return ucwords($row->front_desk_contact);
-            })
-            ->addColumn('sales_contact', function ($row) {
-                return ucwords($row->sales_contact);
-            })
-            ->addColumn('fb_link', function ($row) {
-                return ucwords($row->fb_link);
-            })
-            ->addColumn('insta_link', function ($row) {
-                return ucwords($row->insta_link);
-            })
-            ->addColumn('website_link', function ($row) {
-                return ucwords($row->website_link);
-            })
+            // ->addColumn('num_of_rooms', function ($row) {
+            //     return ucwords($row->num_of_rooms);
+            // })
+            // ->addColumn('front_desk_contact', function ($row) {
+            //     return ucwords($row->front_desk_contact);
+            // })
+            // ->addColumn('sales_contact', function ($row) {
+            //     return ucwords($row->sales_contact);
+            // })
+            // ->addColumn('fb_link', function ($row) {
+            //     return ucwords($row->fb_link);
+            // })
+            // ->addColumn('insta_link', function ($row) {
+            //     return ucwords($row->insta_link);
+            // })
+            // ->addColumn('website_link', function ($row) {
+            //     return ucwords($row->website_link);
+            // })
             ->addColumn('created_at', function ($row) {
                 return ucwords($row->created_at);
             })
@@ -121,7 +127,7 @@ class AccommodationController extends Controller
     {
         //
         if ($request->ajax()) {
-            $records = Accommodation::orderBy('id', 'desc');
+            $records = Accommodation::with('city')->orderBy('id', 'desc');
             return $this->datatables($request, $records);
         }
         $data['url_segment_two'] = request()->segment(2);

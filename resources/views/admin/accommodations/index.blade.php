@@ -45,14 +45,15 @@
                             <th>Default Status</th>
                             <th>Category</th>
                             <th>Amenities</th>
-                            <th>Location</th>
+                            <!-- <th>Location</th> -->
                             <th>Town</th>
-                            <th>Rooms</th>
+                            <th>City</th>
+                            <!-- <th>Rooms</th>
                             <th>Front Desk Contact</th>
                             <th>Sales Contact</th>
                             <th>Facebook Link</th>
                             <th>Instagram Link</th>
-                            <th>Website Link</th>
+                            <th>Website Link</th> -->
                             <th>Status</th>
                             <th>Date</th>
                             <th>Actions</th>
@@ -159,38 +160,42 @@ order: [],
                         name: 'property_amenities_id',
                         data: 'property_amenities_id'
                     },
-                    {
-                        name: 'location',
-                        data: 'location'
-                    },
+                    //{
+                      //  name: 'location',
+                        //data: 'location'
+                    //},
                     {
                         name: 'town_id',
                         data: 'town_id'
                     },
                     {
-                        name: 'num_of_rooms',
-                        data: 'num_of_rooms'
+                        name: 'city_id',
+                        data: 'city_id'
                     },
-                    {
-                        name: 'front_desk_contact',
-                        data: 'front_desk_contact'
-                    },
-                    {
-                        name: 'sales_contact',
-                        data: 'sales_contact'
-                    },
-                    {
-                        name: 'fb_link',
-                        data: 'fb_link'
-                    },
-                    {
-                        name: 'insta_link',
-                        data: 'insta_link'
-                    },
-                    {
-                        name: 'website_link',
-                        data: 'website_link'
-                    },
+                    // {
+                    //     name: 'num_of_rooms',
+                    //     data: 'num_of_rooms'
+                    // },
+                    // {
+                    //     name: 'front_desk_contact',
+                    //     data: 'front_desk_contact'
+                    // },
+                    // {
+                    //     name: 'sales_contact',
+                    //     data: 'sales_contact'
+                    // },
+                    // {
+                    //     name: 'fb_link',
+                    //     data: 'fb_link'
+                    // },
+                    // {
+                    //     name: 'insta_link',
+                    //     data: 'insta_link'
+                    // },
+                    // {
+                    //     name: 'website_link',
+                    //     data: 'website_link'
+                    // },
                     {
                         name: 'status',
                         data: 'status'
