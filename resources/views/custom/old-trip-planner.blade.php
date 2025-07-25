@@ -216,7 +216,7 @@
                                 <h6><i class="bx bx-car mb-1 text-primary"></i> Vehicle</h6>
                                 <select id="new_vehicle_id" style="padding: 0px 15px; border-radius: 5px; margin-top: -20px; border: 1px solid lightgray; width: 100%">
                                     @foreach($allVehicles as $vhicle)
-                                        <option value="{{$vhicle->id}}" data-vehicle-charges="{{ $vhicle->per_day_cost }}" {{ $vhicle->id == Request::get('vehicle_id') ? 'selected' : '' }}>{{$vhicle->name}}</option>
+                                        <option value="{{$vhicle->id}}" {{ $vhicle->id == Request::get('vehicle_id') ? 'selected' : '' }}>{{$vhicle->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -243,12 +243,10 @@
                                                 </span>
                                             </h3>
                                             <input type="hidden" 
-                                                name="total_category_price" 
+                                                name="total_trip_cost" 
                                                 value="{{ (($vehicle->per_day_cost) * (preg_match('/\d+/', Request::get('trip_duration'), $matches) ? $matches[0] : '') ?? 0) + ($category->price) }}" 
-                                                class="total_category_price">
+                                                class="actual-trip-planner-cost">
                                             <input type="hidden" value="" class="changeable-total-trip-planner-cost">
-                                            <input type="hidden" value="{{ preg_match('/\d+/', Request::get('trip_duration'), $matches) ? $matches[0] : 0 }}" class="trip-duration">
-                                            <input type="hidden" value="{{ $vehicle->per_day_cost }}" class="existing-vehicle-charges">
                                         </div>
                                     </div>
                                     <div>
@@ -391,160 +389,143 @@
                                                                         ->first();
                                                                 @endphp
 
-@if($accommodations->count() > 0)
-@if ($accommod)
-    <div class="row accommodation-data-list{{$key1}} accommodation-datalist">
-        <div>
-            <small class="text-dark text-decoration-underline fw-bold">{{ $accommod->name }}</small>
-            <div>
-                @php
-                    $defaultRoom = $accommod->roomCategories->firstWhere('is_default', 1);
-                @endphp
-                <small class="text-dark">
-                    <span class="fw-bold">Price:</span>
-                    @if ($defaultRoom)
-                        PKR <span class="dynamic-price">{{ $defaultRoom->price }}</span>/night
-                    @else
-                        Not available
-                    @endif
-                </small>
-            </div>
-        </div>
-        <div class="col-lg-7">
-            <div id="accommodationCarousel{{$key1}}" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    @foreach($accommod->images as $index => $accommodation)
-                        <div class="carousel-item {{ $index === 0 ? 'active' : '' }}" style="border-radius: 5px;">
-                            <div class="col-md-12 mb-3" style="border-radius: 5px;">
-                                <div class="card h-100">
-                                    <img src="{{ asset('imgs/accommodations/'.$accommodation->image) }}" class="img-fluid" alt="" style="border-radius: 5px; height: 250px; width: 100%; object-fit: cover">
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-5 single-accommodation-data text-dark" data-index="{{ $key1 }}">
-            <small>
-                <span class="fw-bold text-decoration-underline">Room Categories:</span> <br>
-                @if ($accommod->roomCategories && count($accommod->roomCategories) > 0)
-                    <div class="row">
-                    @foreach($accommod->roomCategories as $key3 => $roomCategory)
-                        <div class="col-12 d-flex align-items-center">
-                            <div>
-                                <input type="radio" 
-                                {{ $roomCategory->is_default == 1 ? 'checked' : '' }}
-                                name="room-category-radio-{{ $key1 }}"
-                                class="room-category-radio mt-1"
-                                data-room-category-price="{{ $roomCategory->price }}"
-                                data-accommodation-id="{{ $key1 }}">
-                            </div>
-                            <div class="ms-1">{{ $roomCategory->roomCategory?->name }}</div>
-                            {!! !$loop->last ? '<br>' : '' !!}
-                        </div>
-                    @endforeach
-                    </div>
-                @else
-                    No categories found
-                @endif
-            </small>
-            <br>
-            <button class="btn btn-primary btn-sm" data-bs-target="#change-hotel-modal{{$key1}}" data-bs-toggle="modal">Change Hotel</button>
-        </div>
-        <div class="modal fade modal-center all-accommodations-modal" id="change-hotel-modal{{$key1}}" tabindex="-1" role="dialog" aria-labelledby="change-hotel-modal{{$key1}}" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content modal-center">
-                    <div class="modal-header">
-                        All Accommodations
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            @foreach($accommodations as $accomoKey => $accommo)
-                                <div class="col-md-3 mb-3">
-                                    <div class="card h-100">
-                                        <div id="accommodationCarousel{{$key1}}" class="carousel-class">
-                                            <div class="carousel-inner">
-                                                @foreach($accommo->images as $index => $singleAccommodation)
-                                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}" style="border-radius: 5px;">
-                                                        <div class="col-md-12 mb-3" style="border-radius: 5px;">
-                                                            <div class="card h-100">
-                                                                <img src="{{ asset('imgs/accommodations/'.$singleAccommodation->image) }}" class="img-fluid" alt="" style="border-radius: 5px 5px 0px 0px; height: 100px; width: 100%; object-fit: cover">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="card-footer py-0 px-1">
-                                            <small class="text-center text-dark">
-                                                {{ $accommo->name }}
-                                            </small>
-                                            <hr>
-@php
-    $roomCategories = $accommo->roomCategories->map(function($cat) {
-        return [
-            'price' => $cat->price,
-            'is_default' => $cat->is_default,
-            'room_category' => ['name' => $cat->roomCategory->name ?? ''],
-        ];
-    });
-@endphp
+                                                                @if($accommodations->count() > 0)
+                                                                @if ($accommod)
+                                                                    <div class="row accommodation-data-list">
+                                                                        <div>
+                                                                            <small class="text-dark text-decoration-underline fw-bold">{{ $accommod->name }}</small>
+                                                                            <div>
+                                                                                @php
+                                                                                    $defaultRoom = $accommod->roomCategories->firstWhere('is_default', 1);
+                                                                                @endphp
+                                                                                <small class="text-dark">
+                                                                                    <span class="fw-bold">Price:</span>
+                                                                                    @if ($defaultRoom)
+                                                                                        PKR <span class="dynamic-price">{{ $defaultRoom->price }}</span>/night
+                                                                                    @else
+                                                                                        Not available
+                                                                                    @endif
+                                                                                </small>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-7">
+                                                                            <div id="accommodationCarousel{{$key1}}" class="carousel slide" data-bs-ride="carousel">
+                                                                                <div class="carousel-inner">
+                                                                                    @foreach($accommod->images as $index => $accommodation)
+                                                                                        <div class="carousel-item {{ $index === 0 ? 'active' : '' }}" style="border-radius: 5px;">
+                                                                                            <div class="col-md-12 mb-3" style="border-radius: 5px;">
+                                                                                                <div class="card h-100">
+                                                                                                    <img src="{{ asset('imgs/accommodations/'.$accommodation->image) }}" class="img-fluid" alt="" style="border-radius: 5px; height: 250px; width: 100%; object-fit: cover">
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-5 single-accommodation-data text-dark">
+                                                                            <small>
+                                                                                <span class="fw-bold text-decoration-underline">Room Categories:</span> <br>
+                                                                                @if ($accommod->roomCategories && count($accommod->roomCategories) > 0)
+                                                                                    <div class="row">
+                                                                                    @foreach($accommod->roomCategories as $key3 => $roomCategory)
+                                                                                        <div class="col-12 d-flex align-items-center">
+                                                                                            <div>
+                                                                                                <input type="radio" 
+                                                                                                {{ $roomCategory->is_default == 1 ? 'checked' : '' }}
+                                                                                                name="room-category-radio-{{ $key1 }}"
+                                                                                                class="room-category-radio mt-1"
+                                                                                                data-room-category-price="{{ $roomCategory->price }}"
+                                                                                                data-accommodation-id="{{ $key1 }}">
+                                                                                            </div>
+                                                                                            <div class="ms-1">{{ $roomCategory->roomCategory?->name }}</div>
+                                                                                            {!! !$loop->last ? '<br>' : '' !!}
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                    </div>
+                                                                                @else
+                                                                                    No categories found
+                                                                                @endif
+                                                                            </small>
+                                                                            <br>
+                                                                            <button class="btn btn-primary btn-sm" data-bs-target="#change-hotel-modal{{$key1}}" data-bs-toggle="modal">Change Hotel</button>
+                                                                        </div>
+                                                                        <div class="modal fade modal-center all-accommodations-modal" id="change-hotel-modal{{$key1}}" tabindex="-1" role="dialog" aria-labelledby="change-hotel-modal{{$key1}}" aria-hidden="true">
+                                                                            <div class="modal-dialog modal-lg" role="document">
+                                                                                <div class="modal-content modal-center">
+                                                                                    <div class="modal-header">
+                                                                                        All Accommodations
+                                                                                    </div>
+                                                                                    <div class="modal-body">
+                                                                                        <div class="row">
+                                                                                            @foreach($accommodations as $accomoKey => $accommo)
+                                                                                                <div class="col-md-3 mb-3">
+                                                                                                    <div class="card h-100">
+                                                                                                        <div id="accommodationCarousel{{$key1}}" class="carousel-class">
+                                                                                                            <div class="carousel-inner">
+                                                                                                                @foreach($accommo->images as $index => $singleAccommodation)
+                                                                                                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}" style="border-radius: 5px;">
+                                                                                                                        <div class="col-md-12 mb-3" style="border-radius: 5px;">
+                                                                                                                            <div class="card h-100">
+                                                                                                                                <img src="{{ asset('imgs/accommodations/'.$singleAccommodation->image) }}" class="img-fluid" alt="" style="border-radius: 5px 5px 0px 0px; height: 100px; width: 100%; object-fit: cover">
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                @endforeach
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="card-footer py-0 px-1">
+                                                                                                            <small class="text-center text-dark">
+                                                                                                                {{ $accommo->name }}
+                                                                                                            </small>
+                                                                                                            <hr>
+                                                                                                            <a href="#" class="mb-1 btn btn-primary btn-sm">Select</a>
+                                                                                                            <a href="#" class="show-accommodation-details mb-1 btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#view-accommodation-details-{{$key1}}{{$accomoKey}}">View</a>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="modal fade modal-center accommodation-details-modal" id="view-accommodation-details-{{$key1}}{{$accomoKey}}" tabindex="-1" role="dialog" aria-labelledby="view-accommodation-details-{{$key1}}{{$accomoKey}}" aria-hidden="true">
+                                                                                                    <div class="modal-dialog modal-lg" role="document">
+                                                                                                        <div class="modal-content modal-center">
+                                                                                                            <div class="modal-header">
+                                                                                                                Accommodation Details
+                                                                                                            </div>
+                                                                                                            <div class="modal-body">
+                                                                                                                <div class="row">
+                                                                                                                    <div class="col-md-3 mb-3">
+                                                                                                                        <div class="card h-100">
+                                                                                                                            
+                                                                                                                            <div class="card-footer py-0 px-1">
+                                                                                                                                <small class="text-center text-dark">
+                                                                                                                                    
+                                                                                                                                </small>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            @endforeach
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
 
-<a href="#"
-    class="mb-1 btn btn-primary btn-sm select-accommodation"
-    data-accommodation='@json([
-        'name' => $accommo->name,
-        'room_categories' => $roomCategories
-    ])'
-    data-index="{{ $key1 }}"
-> Select </a>
-                                            <a href="#" class="show-accommodation-details mb-1 btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#view-accommodation-details-{{$key1}}{{$accomoKey}}">View</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal fade modal-center accommodation-details-modal" id="view-accommodation-details-{{$key1}}{{$accomoKey}}" tabindex="-1" role="dialog" aria-labelledby="view-accommodation-details-{{$key1}}{{$accomoKey}}" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content modal-center">
-                                            <div class="modal-header">
-                                                Accommodation Details
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col-md-3 mb-3">
-                                                        <div class="card h-100">
-                                                            
-                                                            <div class="card-footer py-0 px-1">
-                                                                <small class="text-center text-dark">
-                                                                    
-                                                                </small>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Controls -->
-        <!-- <button class="carousel-control-prev" type="button" data-bs-target="#accommodationCarousel{{$key1}}" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#accommodationCarousel{{$key1}}" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button> -->
-    </div>
-@endif
-@else
-    <p>No accommodations found.</p>
-@endif
+                                                                        <!-- Controls -->
+                                                                        <!-- <button class="carousel-control-prev" type="button" data-bs-target="#accommodationCarousel{{$key1}}" data-bs-slide="prev">
+                                                                            <span class="carousel-control-prev-icon"></span>
+                                                                        </button>
+                                                                        <button class="carousel-control-next" type="button" data-bs-target="#accommodationCarousel{{$key1}}" data-bs-slide="next">
+                                                                            <span class="carousel-control-next-icon"></span>
+                                                                        </button> -->
+                                                                    </div>
+                                                                @endif
+                                                                @else
+                                                                    <p>No accommodations found.</p>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
@@ -878,23 +859,16 @@
             calculateTotalRoomPrice();
         }, 500);
 
+        $(document).on('change', '#new_vehicle_id', function () {
+            let newVehicleId = $(this).val();
+            queryParams.vehicle_id = newVehicleId;
 
-        // $(document).on('change', '#new_vehicle_id', function () {
-        //     var newVehicleId = $(this).val();
-        //     // queryParams.vehicle_id = newVehicleId;
+            // Build query string from queryParams object
+            const queryString = new URLSearchParams(queryParams).toString();
 
-        //     // Build query string from queryParams object
-        //     // const queryString = new URLSearchParams(queryParams).toString();
-
-        //     if (newVehicleId != '') {
-        //         $.ajax({
-
-        //         });
-        //     }
-
-        //     // // Redirect
-        //     // window.location.href = "{{ url()->current() }}" + '?' + queryString;
-        // });
+            // Redirect
+            window.location.href = "{{ url()->current() }}" + '?' + queryString;
+        });
         
         $('#copy-the-link').on('click', function () {
             const textToCopy = $('#link-to-copy').val();
@@ -911,7 +885,7 @@
 
         $(document).on('change', '.room-category-radio', function () {
             let roomCategoryPrice = Number($(this).attr('data-room-category-price') || 0);
-            $(this).closest('.accommodation-datalist').find('.dynamic-price').html(roomCategoryPrice);
+            $(this).closest('.accommodation-data-list').find('.dynamic-price').html(roomCategoryPrice);
             calculateTotalRoomPrice();
         });
 
@@ -922,35 +896,13 @@
             $('.room-category-radio:checked').each(function () {
                 total += Number($(this).data('room-category-price'));
             });
-            
-            let newVehicleCharges = Number($('#new_vehicle_id').find('option:selected').attr('data-vehicle-charges'));
-            let tripDuration = $('.trip-duration').val();
-
-            total += Number(newVehicleCharges) * Number(tripDuration);
-            
-            let totalOfAll = Number(total);
+            let actualTripPlannerCost = Number(($('.actual-trip-planner-cost').val() || 0));
+            let totalOfAll = Number(total) + Number(actualTripPlannerCost);
             // Do something with total
             $('.changeable-total-trip-planner-cost').val(Number(Number(totalOfAll)));
             $('.total-trip-price').html('PKR ' + Number(Number(totalOfAll)));
             $('.total-final-amount').val(Number(totalOfAll));
         }
-
-
-        $('#new_vehicle_id').on('change', function () {
-            const vehicleId = $(this).val();
-            const dataPerDayCost = $(this).find('option:selected').attr('data-vehicle-charges');
-
-            const url = new URL(window.location.href);
-
-            if (vehicleId) {
-                url.searchParams.set('vehicle_id', vehicleId);
-            } else {
-                url.searchParams.delete('vehicle_id');
-            }
-
-            history.replaceState(null, '', url.toString());
-            calculateTotalRoomPrice();
-        });
 
         window.isGuest = {{ Auth::check() ? 'false' : 'true' }};
         $(document).on('click', '.book-a-trip', function() {
@@ -997,67 +949,6 @@
                     }
                 });
             }
-        });
-        
-        $('.select-accommodation').on('click', function (e) {
-            e.preventDefault();
-
-            const accommodation = $(this).data('accommodation');
-            const index = $(this).data('index');
-
-            // Find container
-            const $container = $(`.single-accommodation-data[data-index="${index}"]`);
-            if ($container.length === 0) return;
-
-            const $row = $container.closest('.row');
-
-            // Update name
-            const $nameEl = $row.find('small.text-decoration-underline');
-            if ($nameEl.length) {
-                $nameEl.text(accommodation.name);
-            }
-
-            // Update price (find default room category)
-            const defaultRoom = accommodation.room_categories.find(cat => cat.is_default === 1);
-            const $priceEl = $row.find('.dynamic-price');
-            if (defaultRoom && $priceEl.length) {
-                $priceEl.text(defaultRoom.price);
-            }
-
-            // Update room categories
-            const $categoriesWrapper = $container.find('.row');
-            if ($categoriesWrapper.length) {
-                $categoriesWrapper.empty();
-                accommodation.room_categories.forEach((cat, idx) => {
-                    const isChecked = cat.is_default === 1 ? 'checked' : '';
-                    const categoryHtml = `
-                        <div class="col-12 d-flex align-items-center">
-                            <div>
-                                <input type="radio"
-                                    name="room-category-radio-${index}"
-                                    class="room-category-radio mt-1"
-                                    data-room-category-price="${cat.price}"
-                                    data-accommodation-id="${index}"
-                                    ${isChecked}>
-                            </div>
-                            <div class="ms-1">${cat.room_category?.name ?? ''}</div>
-                            ${idx !== accommodation.room_categories.length - 1 ? '<br>' : ''}
-                        </div>
-                    `;
-                    $categoriesWrapper.append(categoryHtml);
-                });
-            }
-
-            // Close modal
-            const modalId = `#change-hotel-modal${index}`;
-            const $modal = $(modalId);
-            if ($modal.length) {
-                const modalInstance = bootstrap.Modal.getInstance($modal[0]);
-                if (modalInstance) {
-                    modalInstance.hide();
-                }
-            }
-            calculateTotalRoomPrice();
         });
 
         $(document).on('click', '#signup-button', function(e) {
@@ -1163,60 +1054,5 @@
             }, 1000);
         });
     });
-
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     // Handle click on "Select" button in modal
-    //     document.querySelectorAll('.select-accommodation').forEach(button => {
-    //         button.addEventListener('click', function (e) {
-    //             e.preventDefault();
-
-    //             const accommodation = JSON.parse(this.getAttribute('data-accommodation'));
-    //             const index = this.getAttribute('data-index');
-
-    //             // Update name
-    //             const nameEl = document.querySelector(`.single-accommodation-data[data-index="${index}"]`).closest('.row').querySelector('small.text-decoration-underline');
-    //             if (nameEl) nameEl.textContent = accommodation.name;
-
-    //             // Update price (find default room category)
-    //             const defaultRoom = accommodation.room_categories.find(cat => cat.is_default === 1);
-    //             const priceEl = document.querySelector(`.single-accommodation-data[data-index="${index}"]`).closest('.row').querySelector('.dynamic-price');
-    //             if (defaultRoom && priceEl) {
-    //                 priceEl.textContent = defaultRoom.price;
-    //             }
-
-    //             // Update room categories
-    //             const categoriesWrapper = document.querySelector(`.single-accommodation-data[data-index="${index}"] .row`);
-    //             if (categoriesWrapper) {
-    //                 categoriesWrapper.innerHTML = '';
-    //                 accommodation.room_categories.forEach((cat, idx) => {
-    //                     const categoryEl = document.createElement('div');
-    //                     categoryEl.classList.add('col-12', 'd-flex', 'align-items-center');
-
-    //                     categoryEl.innerHTML = `
-    //                         <div>
-    //                             <input type="radio" 
-    //                                 name="room-category-radio-${index}"
-    //                                 class="room-category-radio mt-1"
-    //                                 data-room-category-price="${cat.price}"
-    //                                 data-accommodation-id="${index}"
-    //                                 ${cat.is_default === 1 ? 'checked' : ''}>
-    //                         </div>
-    //                         <div class="ms-1">${cat.room_category?.name ?? ''}</div>
-    //                         ${idx !== accommodation.room_categories.length - 1 ? '<br>' : ''}
-    //                     `;
-    //                     categoriesWrapper.appendChild(categoryEl);
-    //                 });
-    //             }
-
-    //             // Close modal
-    //             const modal = document.getElementById(`change-hotel-modal${index}`);
-    //             if (modal) {
-    //                 const bsModal = bootstrap.Modal.getInstance(modal);
-    //                 if (bsModal) bsModal.hide();
-    //             }
-    //         });
-    //     });
-    // });
-    
 </script>
 @endsection
