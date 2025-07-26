@@ -1029,7 +1029,7 @@
             if ($categoriesWrapper.length) {
                 $categoriesWrapper.empty();
                 accommodation.room_categories.forEach((cat, idx) => {
-                    const isChecked = cat.is_default === 1 ? 'checked' : '';
+                    const isChecked = cat.is_default == '1' ? 'checked' : '';
                     const categoryHtml = `
                         <div class="col-12 d-flex align-items-center">
                             <div>
