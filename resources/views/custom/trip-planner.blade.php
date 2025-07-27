@@ -927,8 +927,8 @@
             let tripDuration = $('.trip-duration').val();
 
             total += Number(newVehicleCharges) * Number(tripDuration);
-            
-            let totalOfAll = Number(total);
+            let percentPrice = Number(5/100) * Number(total);
+            let totalOfAll = Number(total) + Number(percentPrice);
             // Do something with total
             $('.changeable-total-trip-planner-cost').val(Number(Number(totalOfAll)));
             $('.total-trip-price').html('PKR ' + Number(Number(totalOfAll)));
