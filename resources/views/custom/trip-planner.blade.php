@@ -877,24 +877,6 @@
         setTimeout(() => {
             calculateTotalRoomPrice();
         }, 500);
-
-
-        // $(document).on('change', '#new_vehicle_id', function () {
-        //     var newVehicleId = $(this).val();
-        //     // queryParams.vehicle_id = newVehicleId;
-
-        //     // Build query string from queryParams object
-        //     // const queryString = new URLSearchParams(queryParams).toString();
-
-        //     if (newVehicleId != '') {
-        //         $.ajax({
-
-        //         });
-        //     }
-
-        //     // // Redirect
-        //     // window.location.href = "{{ url()->current() }}" + '?' + queryString;
-        // });
         
         $('#copy-the-link').on('click', function () {
             const textToCopy = $('#link-to-copy').val();
@@ -1016,14 +998,12 @@
             if ($nameEl.length) {
                 $nameEl.text(accommodation.name);
             }
-
             // Update price (find default room category)
             const defaultRoom = accommodation.room_categories.find(cat => cat.is_default === 1);
             const $priceEl = $row.find('.dynamic-price');
             if (defaultRoom && $priceEl.length) {
                 $priceEl.text(defaultRoom.price);
             }
-
             // Update room categories
             const $categoriesWrapper = $container.find('.row');
             if ($categoriesWrapper.length) {
@@ -1047,7 +1027,6 @@
                     $categoriesWrapper.append(categoryHtml);
                 });
             }
-
             // Close modal
             const modalId = `#change-hotel-modal${index}`;
             const $modal = $(modalId);
