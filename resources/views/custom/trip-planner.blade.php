@@ -878,7 +878,7 @@
             calculateTotalRoomPrice();
         }, 500);
         
-        $('#copy-the-link').on('click', function () {
+        $(document).on('click', '#copy-the-link', function () {
             const textToCopy = $('#link-to-copy').val();
 
             navigator.clipboard.writeText(textToCopy)
@@ -918,7 +918,7 @@
         }
 
 
-        $('#new_vehicle_id').on('change', function () {
+        $(document).on('change', '#new_vehicle_id', function () {
             const vehicleId = $(this).val();
             const dataPerDayCost = $(this).find('option:selected').attr('data-vehicle-charges');
 
@@ -981,7 +981,7 @@
             }
         });
         
-        $('.select-accommodation').on('click', function (e) {
+        $(document).on('click', '.select-accommodation', function (e) {
             e.preventDefault();
 
             const accommodation = $(this).data('accommodation');
