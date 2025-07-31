@@ -999,7 +999,7 @@
                 $nameEl.text(accommodation.name);
             }
             // Update price (find default room category)
-            const defaultRoom = accommodation.room_categories.find(cat => cat.is_default === 1);
+            const defaultRoom = accommodation.room_categories.find(cat => cat.is_default == 1);
             const $priceEl = $row.find('.dynamic-price');
             if (defaultRoom && $priceEl.length) {
                 $priceEl.text(defaultRoom.price);
