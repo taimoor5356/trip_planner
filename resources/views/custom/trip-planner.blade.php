@@ -1004,6 +1004,7 @@
             if (defaultRoom && $priceEl.length) {
                 $priceEl.text(defaultRoom.price);
             }
+            alert(defaultRoom.price);
             // Update room categories
             const $categoriesWrapper = $container.find('.row');
             if ($categoriesWrapper.length) {
